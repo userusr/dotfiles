@@ -14,10 +14,17 @@ ax_backup() {
     fi
 
     local name=$(basename "$1")
-    local arc_name="$(pwd)/${name}_$(date +%Y%m%d%H%M%S).backup.tar.xz"
+    local arc_name="$(pwd)/${name}_$(date +%Y%m%d%H%M%S).backup.tar.gz"
 
     cd "$(dirname "$1")"
-    tar -I pxz -cvf "${arc_name}" "${name}"/
+    tar -I pigz -cvf "${arc_name}" "${name}"/
+
+    echo
+    echo testing ...
+
+    tar -I pigz -tf "${arc_name}" &> /dev/null
+
+    sha1sum -b $arc_name > $arc_name.sha1
 }
 
 # gitignore.io

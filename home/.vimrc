@@ -333,7 +333,7 @@ set nowrap
 " Sets 'foldlevel' when starting to edit another buffer in a window.
 " Useful to always start editing with all folds closed (value zero),
 " some folds closed (one) or no folds closed (99).
-set foldlevelstart=2
+set foldlevelstart=99
 " Access your system clipboard
 set clipboard=unnamed
 " "вечная" отмена изменений
@@ -428,7 +428,7 @@ execute "set backupdir=".mybackupdir
 " nerdtree
 let NERDTreeAutoDeleteBuffer = 1
 " If set to 1, the NERD tree window will close after opening a file
-let NERDTreeQuitOnOpen = 1
+let NERDTreeQuitOnOpen = 0
 let NERDTreeChDirMode=2
 let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$', '\.swp$']
 let NERDTreeSortOrder=['^__\.py$', '\/$', '*', '\.swp$',  '\~$']
