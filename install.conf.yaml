@@ -1,0 +1,88 @@
+- defaults:
+    link:
+      relink: true
+
+- clean: ["~"]
+
+- create:
+    - ~/.ssh
+    - ~/.config
+    - ~/.config/nvim/lua/
+    - ~/.code_profiles/python/data/User
+    - ~/.code_profiles/python/extensions
+    - ~/.code_profiles/arduino/data/User
+    - ~/.code_profiles/arduino/extensions
+    - ~/.code_profiles/idf/data/User
+    - ~/.code_profiles/idf/extensions
+    - ~/.code_profiles/latex/data/User
+    - ~/.code_profiles/latex/extensions
+    - ~/.code_profiles/vue/data/User
+    - ~/.code_profiles/vue/extensions
+    - ~/.config/bat
+    - ~/.config/Code/User
+    - ~/.local/bin
+    - ~/.config/xfce4/terminal
+    - ~/.coninue
+
+- link:
+    ~/.config/nvim/lua/user: home/.config/nvim/lua/user
+    ~/.vimrc: home/.vimrc
+    ~/.ssh/config: home/.ssh/config
+    ~/.bash_aliases: home/.bash_aliases
+    ~/.bashrc_local: home/.bashrc_local
+    ~/.dir_colors: home/.dir_colors
+    ~/.gitconfig: home/.gitconfig
+    ~/.gvimrc: home/.gvimrc
+    ~/.tmux.conf: home/.tmux.conf
+    ~/.config/mc/hotlist: home/.config/mc/hotlist
+    ~/.config/mc/ini: home/.config/mc/ini
+    ~/.config/mc/panels.ini: home/.config/mc/panels.ini
+    ~/.config/yt-dlp.conf: home/.config/yt-dlp.conf
+    ~/libinput-gestures.conf: home/libinput-gestures.conf
+    ~/.vim-snippets: home/.vim-snippets
+    ~/.zshrc: home/.zshrc
+    ~/.oh-my-zsh-custom: home/.oh-my-zsh-custom
+    ~/.config/bat/config: home/.config/bat/config
+    ~/.config/xfce4/terminal/colorschemes: home/.config/xfce4/terminal/colorschemes
+    ~/.config/xfce4/terminal/terminalrc: home/.config/xfce4/terminal/terminalrc
+    ~/.config/tmuxinator: home/.config/tmuxinator
+    ~/.config/redshift.conf: home/.config/redshift.conf
+    ~/.Xmodmap: home/.Xmodmap
+    ~/.continue/config.yaml: home/.continue/config.yaml
+    ~/.continue/.continueignore: home/.continue/.continueignore
+
+    ~/.config/Code/User/snippets: home/.code_profiles/python/data/User/snippets
+    ~/.config/Code/User/keybindings.json: home/.code_profiles/python/data/User/keybindings.json
+    ~/.config/Code/User/settings.json: home/.code_profiles/python/data/User/settings.json
+    ~/.config/Code/User/tasks.json: home/.code_profiles/python/data/User/tasks.json
+
+    ~/.code_profiles/python/data/User/snippets: home/.code_profiles/python/data/User/snippets
+    ~/.code_profiles/python/data/User/keybindings.json: home/.code_profiles/python/data/User/keybindings.json
+    ~/.code_profiles/python/data/User/settings.json: home/.code_profiles/python/data/User/settings.json
+    ~/.code_profiles/python/data/User/tasks.json: home/.code_profiles/python/data/User/tasks.json
+
+    ~/.code_profiles/arduino/data/User/snippets: home/.code_profiles/python/data/User/snippets
+    ~/.code_profiles/arduino/data/User/keybindings.json: home/.code_profiles/python/data/User/keybindings.json
+    ~/.code_profiles/arduino/data/User/settings.json: home/.code_profiles/python/data/User/settings.json
+    ~/.code_profiles/arduino/data/User/tasks.json: home/.code_profiles/python/data/User/tasks.json
+
+    ~/.code_profiles/idf/data/User/snippets: home/.code_profiles/python/data/User/snippets
+    ~/.code_profiles/idf/data/User/keybindings.json: home/.code_profiles/python/data/User/keybindings.json
+    ~/.code_profiles/idf/data/User/settings.json: home/.code_profiles/python/data/User/settings.json
+    ~/.code_profiles/idf/data/User/tasks.json: home/.code_profiles/python/data/User/tasks.json
+
+    ~/.code_profiles/latex/data/User/snippets: home/.code_profiles/python/data/User/snippets
+    ~/.code_profiles/latex/data/User/keybindings.json: home/.code_profiles/python/data/User/keybindings.json
+    ~/.code_profiles/latex/data/User/settings.json: home/.code_profiles/python/data/User/settings.json
+    ~/.code_profiles/latex/data/User/tasks.json: home/.code_profiles/python/data/User/tasks.json
+
+    ~/.code_profiles/vue/data/User/snippets: home/.code_profiles/python/data/User/snippets
+    ~/.code_profiles/vue/data/User/keybindings.json: home/.code_profiles/python/data/User/keybindings.json
+    ~/.code_profiles/vue/data/User/settings.json: home/.code_profiles/python/data/User/settings.json
+    ~/.code_profiles/vue/data/User/tasks.json: home/.code_profiles/python/data/User/tasks.json
+
+- shell:
+    - [git submodule update --init --recursive, Installing submodules]
+    - [cd /home/axl/.pyenv && git pull, Update pyenv]
+    #    - [cd /home/axl/.config/nvim && git pull, Update astro nvim]
+    - [cd /home/axl/.fzf && git pull, Update fzf]
