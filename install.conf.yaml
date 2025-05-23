@@ -14,6 +14,12 @@
     ~/.gitconfig: home/.gitconfig
     ~/.tmux.conf: home/.tmux.conf
     ~/.zshrc: home/.zshrc
+    ~/.oh-my-zsh-custom: home/.oh-my-zsh-custom
+
+    ~/.config/Code/User/snippets: home/.code_profiles/python/data/User/snippets
+    ~/.config/Code/User/keybindings.json: home/.code_profiles/python/data/User/keybindings.json
+    ~/.config/Code/User/settings.json: home/.code_profiles/python/data/User/settings.json
+    ~/.config/Code/User/tasks.json: home/.code_profiles/python/data/User/tasks.json
 
 - shell:
     - [git submodule update --init --recursive, Installing submodules]
