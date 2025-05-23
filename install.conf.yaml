@@ -12,8 +12,8 @@
 - link:
     ~/.vimrc: home/.vimrc
     ~/.gitconfig: home/.gitconfig
-    ~/.gvimrc: home/.gvimrc
     ~/.tmux.conf: home/.tmux.conf
+    ~/.zshrc: home/.zshrc
 
 - shell:
     - [git submodule update --init --recursive, Installing submodules]
