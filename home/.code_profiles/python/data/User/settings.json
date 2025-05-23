@@ -1,0 +1,463 @@
+{
+    "platformio-ide.autoCloseSerialMonitor": true,
+    "platformio-ide.forceUploadAndMonitor": true,
+    "files.trimTrailingWhitespace": false,
+    "editor.renderWhitespace": "all",
+    "telemetry.telemetryLevel": "off",
+    // "telemetry.telemetryLevel": "all",
+    "workbench.editor.showTabs": "single",
+    "editor.definitionLinkOpensInPeek": true,
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs": "active",
+    "cSpell.language": "en,ru",
+    "keyboard.dispatch": "keyCode",
+    "rewrap.autoWrap.enabled": false,
+    "trailing-spaces.highlightCurrentLine": false,
+    "notebook.formatOnSave.enabled": true,
+    "scss.lint.unknownAtRules": "ignore",
+    "nuxtr.vueFiles.template.defaultLanguage": "html",
+    "nuxtr.vueFiles.firstTag": "script",
+    "nuxtr.vueFiles.script.type": "setup",
+    "nuxtr.vueFiles.script.defaultLanguage": "ts",
+    "nuxtr.vueFiles.style.addStyleTag": true,
+    "nuxtr.vueFiles.style.alwaysScoped": true,
+    "nuxtr.piniaFiles.defaultTemplate": "setup",
+    "terminal.integrated.fontSize": 12,
+    "editor.fontSize": 14,
+    "window.zoomLevel": 0,
+    "prettier.configPath": "prettier.config.cjs",
+    "prettier.requireConfig": true,
+    "eslint.useFlatConfig": true,
+    "eslint.format.enable": true,
+    "editor.rulers": [
+        80
+    ],
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff"
+    },
+    "notebook.codeActionsOnSave": {
+        "notebook.source.fixAll": "explicit"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[typescriptreact][typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "file",
+        "editor.codeActionsOnSave": {
+            "editor.action.organizeImports": "always",
+            "editor.action.formatDocument": "always",
+            "eslint.executeAutofix": "always"
+        },
+    },
+    "[vue]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+        // "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "file",
+        "editor.codeActionsOnSave": {
+            "editor.action.organizeImports": "always",
+            "editor.action.formatDocument": "always",
+            "eslint.executeAutofix": "always"
+        },
+        "editor.rulers": [
+            80
+        ],
+    },
+    "[git-commit]": {
+        "editor.rulers": [
+            72,
+            50
+        ],
+        "editor.wordWrap": "off"
+    },
+    "[cpp]": {
+        "editor.defaultFormatter": "xaver.clang-format"
+    },
+    "[latex]": {
+        "editor.rulers": [
+            100
+        ],
+        "editor.wrappingIndent": "same",
+        // Перенос по словам
+        "editor.wordWrap": "on",
+        "editor.wordWrapColumn": 100
+    },
+    "vim.leader": ",",
+    "vim.easymotion": true,
+    "vim.useSystemClipboard": true,
+    "vim.handleKeys": {
+        "<C-k>": false,
+    },
+    "vim.normalModeKeyBindingsNonRecursive": [
+        // Переход не на середину экрана а на 3 строки ниже верхнего края
+        // {
+        //     "before": [
+        //         "z",
+        //         "t"
+        //     ],
+        //     "after": [
+        //         "z",
+        //         "t",
+        //         "3",
+        //         "C-y"
+        //     ]
+        // },
+        // При поиске центрировать результат
+        {
+            "before": [
+                "N"
+            ],
+            "after": [
+                "N",
+                "z",
+                "z"
+            ]
+        },
+        // При поиске центрировать результат
+        {
+            "before": [
+                "n"
+            ],
+            "after": [
+                "n",
+                "z",
+                "z"
+            ]
+        },
+        // Перемещаться посимвольно
+        {
+            "before": [
+                "j"
+            ],
+            "after": [
+                "g",
+                "j"
+            ]
+        },
+        // Показать боковую панеть с файловым деревом (toggle explorer)
+        {
+            "before": [
+                "<leader>",
+                "e"
+            ],
+            "commands": [
+                "workbench.view.explorer"
+            ]
+        },
+        // Перемещаться посимвольно
+        {
+            "before": [
+                "k"
+            ],
+            "after": [
+                "g",
+                "k"
+            ]
+        },
+        // оставить только текущее окно, все остальные закрыть (close other)
+        {
+            "before": [
+                "<leader>",
+                "z",
+            ],
+            "after": [
+                "<C-w>",
+                "o",
+            ],
+            "commands": [
+                "workbench.files.action.collapseExplorerFolders",
+                "workbench.action.closeEditorsInOtherGroups",
+                "workbench.action.closeOtherEditors",
+                "workbench.action.closeSidebar"
+            ]
+        },
+        // форматировать документ (format document)
+        {
+            "before": [
+                "<leader>",
+                "d",
+                "f"
+            ],
+            "commands": [
+                "editor.action.formatDocument"
+            ]
+        },
+        // открыть определение вo всплывающем окне (go to definition)
+        {
+            "before": [
+                "<leader>",
+                "g",
+                "d"
+            ],
+            "commands": [
+                "editor.action.peekDefinition"
+            ]
+        },
+        // Найти упоминания в коде (на боковой панели) (go to references)
+        {
+            "before": [
+                "<leader>",
+                "g",
+                "r"
+            ],
+            "commands": [
+                "references-view.findReferences"
+            ]
+        },
+        // Найти упоминания в коде (в поиске) (go to find in files)
+        {
+            "before": [
+                "<leader>",
+                "g",
+                "f",
+            ],
+            "commands": [
+                "workbench.action.findInFiles"
+            ]
+        },
+        // Найти упоминания в коде (всплывающее окно) (go to usages)
+        // потом перемещает строку с курсорок к верху окна и запоминает позицию
+        // курсора в метке "b"
+        {
+            "before": [
+                "<leader>",
+                "g",
+                "u"
+            ],
+            "after": [
+                "m",
+                "b",
+                "z",
+                "t",
+                "3",
+                "C-y"
+            ],
+            "commands": [
+                "editor.action.goToReferences"
+            ]
+        },
+        // Перейти к заголовку (go to header)
+        {
+            "before": [
+                "<leader>",
+                "g",
+                "h"
+            ],
+            "commands": [
+                "C_Cpp.SwitchHeaderSource"
+            ]
+        },
+        // Показать боковую патель с git (toggle git)
+        {
+            "before": [
+                "<leader>",
+                "t",
+                "g"
+            ],
+            "commands": [
+                "workbench.view.scm"
+            ]
+        },
+        // Показать боковую панеть со ссылками (toggle references)
+        {
+            "before": [
+                "<leader>",
+                "t",
+                "r",
+            ],
+            "commands": [
+                "references-view.tree.focus"
+            ]
+        },
+        // Показать / скрыть боковую панель (toggle sidebar)
+        {
+            "before": [
+                "<leader>",
+                "t",
+                "s",
+            ],
+            "commands": [
+                "workbench.action.toggleSidebarVisibility"
+            ]
+        },
+        // Показать / скрыть боковую панель (toggle sidebar)
+        {
+            "before": [
+                "<space>"
+            ],
+            "commands": [
+                "workbench.action.toggleSidebarVisibility",
+            ]
+        },
+        // Перейти к файлу ....
+        {
+            "before": [
+                "<leader>",
+                "b"
+            ],
+            "commands": [
+                "workbench.action.quickOpen"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "w"
+            ],
+            "commands": [
+                // "editor.action.formatDocument",
+                // "eslint.executeAutofix",
+                "workbench.action.files.saveAll",
+            ]
+        },
+        // Перейти к предыдущей ошибке
+        {
+            "before": [
+                "[",
+                "e"
+            ],
+            "commands": [
+                "editor.action.marker.prevInFiles"
+            ]
+        },
+        // Перейти к следующей ошибке
+        {
+            "before": [
+                "]",
+                "e"
+            ],
+            "commands": [
+                "editor.action.marker.nextInFiles"
+            ]
+        },
+        // Перейти к предыдущему изменению
+        {
+            "before": [
+                "[",
+                "c"
+            ],
+            "commands": [
+                "workbench.action.editor.previousChange",
+                "workbench.action.compareEditor.previousChange"
+            ]
+        },
+        // Перейти к следующему изменению
+        {
+            "before": [
+                "]",
+                "c"
+            ],
+            "commands": [
+                "workbench.action.editor.nextChange",
+                "workbench.action.compareEditor.nextChange"
+            ]
+        },
+        // Поиск EasyMotions
+        {
+            "before": [
+                "s"
+            ],
+            "after": [
+                "leader",
+                "leader",
+                "2",
+                "s"
+            ]
+        }
+    ],
+    "terminal.integrated.copyOnSelection": true,
+    "terminal.integrated.fontWeightBold": "normal",
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/node_modules/*/**": true,
+        "**/.venv/**": true,
+        "**/venv/**": true
+    },
+    "editor.renderControlCharacters": true,
+    "editor.minimap.size": "fit",
+    "explorer.confirmDelete": false,
+    "editor.snippetSuggestions": "top",
+    "editor.tabCompletion": "on",
+    "editor.quickSuggestions": {
+        "other": "on",
+        "comments": "off",
+        "strings": "off"
+    },
+    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.suggestSelection": "first",
+    "go.formatTool": "goimports",
+    "scm.alwaysShowRepositories": true,
+    "editor.formatOnSaveMode": "modifications",
+    "editor.minimap.enabled": false,
+    "gitlens.gitCommands.closeOnFocusOut": true,
+    "python.languageServer": "Pylance",
+    "workbench.editorAssociations": {
+        "*.ipynb": "jupyter-notebook",
+        "*.pdf": "latex-workshop-pdf-hook"
+    },
+    "go.toolsManagement.autoUpdate": true,
+    "redhat.telemetry.enabled": false,
+    "notebook.cellToolbarLocation": {
+        "default": "right",
+        "jupyter-notebook": "left"
+    },
+    "git-graph.openNewTabEditorGroup": "Two",
+    "editor.unicodeHighlight.ambiguousCharacters": false,
+    "notebook.lineNumbers": "on",
+    "cSpell.userWords": [
+        "pydantic"
+    ],
+    "jupyter.askForKernelRestart": false,
+    "git.autofetch": true,
+    "editor.wordWrap": "on",
+    "workbench.startupEditor": "none",
+    "extensions.ignoreRecommendations": true,
+    "workbench.editor.enablePreview": false,
+    "todo-tree.regex.regex": "(//|%|#|<!--|;|/\\*|^|^[ \\t]*(-|\\d+.))\\s*($TAGS)",
+    "todo-tree.general.statusBar": "total",
+    "workbench.colorTheme": "Zenburn",
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[css]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "workbench.sideBar.location": "left",
+    "[c]": {
+        "editor.defaultFormatter": "xaver.clang-format"
+    },
+    "editor.fontFamily": "'JetBrainsMono Nerd Font', 'Droid Sans Mono', 'monospace', monospace",
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "idf.espIdfPath": "/home/axl/.esp/esp-idf",
+    "idf.toolsPath": "/home/axl/.espressif",
+    "idf.customExtraPaths": "/home/axl/.espressif/tools/xtensa-esp-elf-gdb/12.1_20221002/xtensa-esp-elf-gdb/bin:/home/axl/.espressif/tools/riscv32-esp-elf-gdb/12.1_20221002/riscv32-esp-elf-gdb/bin:/home/axl/.espressif/tools/xtensa-esp32-elf/esp-12.2.0_20230208/xtensa-esp32-elf/bin:/home/axl/.espressif/tools/xtensa-esp32s2-elf/esp-12.2.0_20230208/xtensa-esp32s2-elf/bin:/home/axl/.espressif/tools/xtensa-esp32s3-elf/esp-12.2.0_20230208/xtensa-esp32s3-elf/bin:/home/axl/.espressif/tools/riscv32-esp-elf/esp-12.2.0_20230208/riscv32-esp-elf/bin:/home/axl/.espressif/tools/esp32ulp-elf/2.35_20220830/esp32ulp-elf/bin:/home/axl/.espressif/tools/openocd-esp32/v0.12.0-esp32-20230419/openocd-esp32/bin:/home/axl/.espressif/tools/esp-rom-elfs/20230320",
+    "idf.customExtraVars": {
+        "OPENOCD_SCRIPTS": "/home/axl/.espressif/tools/openocd-esp32/v0.12.0-esp32-20230419/openocd-esp32/share/openocd/scripts",
+        "ESP_ROM_ELF_DIR": "/home/axl/.espressif/tools/esp-rom-elfs/20230320/"
+    },
+    "idf.gitPath": "git",
+    "workbench.activityBar.location": "top",
+    "codeium.enableConfig": {
+        "*": true,
+        "ansible": true
+    },
+    "window.customTitleBarVisibility": "auto",
+    "window.menuBarVisibility": "compact",
+    "[typescript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "tabby.endpoint": "http://192.168.1.195:1234",
+    "markdown.marp.pdf.outlines": "headings",
+    "markdown.marp.browser": "chrome",
+    "continue.enableTabAutocomplete": true,
+    "yaml.schemas": {
+        "/home/axl/.vscode/extensions/continue.continue-1.0.7-linux-x64/config-yaml-schema.json": [
+            ".continue/**/*.yaml"
+        ]
+    },
+}
