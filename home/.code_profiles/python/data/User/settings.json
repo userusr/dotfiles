@@ -4,8 +4,9 @@
     "files.trimTrailingWhitespace": false,
     "editor.renderWhitespace": "all",
     "telemetry.telemetryLevel": "off",
-    // "telemetry.telemetryLevel": "all",
     "workbench.editor.showTabs": "single",
+    "workbench.editor.showIcons": false,
+    "workbench.editor.labelFormat": "medium",
     "editor.definitionLinkOpensInPeek": true,
     "editor.bracketPairColorization.enabled": true,
     "editor.guides.bracketPairs": "active",
@@ -29,14 +30,25 @@
     "prettier.requireConfig": true,
     "eslint.useFlatConfig": true,
     "eslint.format.enable": true,
+    "gitblame.inlineMessageEnabled": true,
+    // https://code.visualstudio.com/docs/editing/editingevolved#_breadcrumb-keyboard-navigation
+    // Ctrl+Shift+.  select that last element and open a dropdown
+    // Ctrl+Shift+;  focus the last element
+    "breadcrumbs.enabled": true,
+    // "workbench.layoutControl.enabled": false,
     "editor.rulers": [
         80
     ],
     "[python]": {
-        "editor.defaultFormatter": "charliermarsh.ruff"
+        "editor.defaultFormatter": "charliermarsh.ruff",
     },
     "notebook.codeActionsOnSave": {
         "notebook.source.fixAll": "explicit"
+    },
+    "[markdown]": {
+        "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": true
     },
     "[jsonc]": {
         "editor.defaultFormatter": "vscode.json-language-features"
@@ -104,6 +116,24 @@
         //         "C-y"
         //     ]
         // },
+        // Переключение между буферами
+        {
+            "before": [
+                "<S-h>"
+            ],
+            "commands": [
+                ":bprevious"
+            ]
+        },
+        // Переключение между буферами
+        {
+            "before": [
+                "<S-l>"
+            ],
+            "commands": [
+                ":bnext"
+            ]
+        },
         // При поиске центрировать результат
         {
             "before": [
@@ -162,15 +192,15 @@
                 "<leader>",
                 "z",
             ],
-            "after": [
-                "<C-w>",
-                "o",
-            ],
+            // "after": [
+            //     "<C-w>",
+            //     "o",
+            // ],
             "commands": [
                 "workbench.files.action.collapseExplorerFolders",
                 "workbench.action.closeEditorsInOtherGroups",
                 "workbench.action.closeOtherEditors",
-                "workbench.action.closeSidebar"
+                "git.closeAllDiffEditors",
             ]
         },
         // форматировать документ (format document)
@@ -180,8 +210,15 @@
                 "d",
                 "f"
             ],
+            "after": [
+                "workbench.action.files.saveAll",
+            ],
             "commands": [
-                "editor.action.formatDocument"
+                "editor.action.formatDocument",
+                "ruff.executeAutofix",
+                "ruff.executeFormat",
+                "ruff.executeOrganizeImports",
+                "workbench.action.files.saveAll",
             ]
         },
         // открыть определение вo всплывающем окне (go to definition)
@@ -214,7 +251,8 @@
                 "f",
             ],
             "commands": [
-                "workbench.action.findInFiles"
+                "editor.action.addSelectionToNextFindMatch",
+                "workbench.action.findInFiles",
             ]
         },
         // Найти упоминания в коде (всплывающее окно) (go to usages)
@@ -226,14 +264,14 @@
                 "g",
                 "u"
             ],
-            "after": [
-                "m",
-                "b",
-                "z",
-                "t",
-                "3",
-                "C-y"
-            ],
+            // "after": [
+            //     "m",
+            //     "b",
+            //     "z",
+            //     "t",
+            //     "3",
+            //     "C-y"
+            // ],
             "commands": [
                 "editor.action.goToReferences"
             ]
@@ -249,7 +287,7 @@
                 "C_Cpp.SwitchHeaderSource"
             ]
         },
-        // Показать боковую патель с git (toggle git)
+        // Показать боковую патель с git (toggle_git)
         {
             "before": [
                 "<leader>",
@@ -257,7 +295,11 @@
                 "g"
             ],
             "commands": [
-                "workbench.view.scm"
+                "workbench.action.togglePanel",
+                "workbench.view.scm",
+                "workbench.action.closeAllGroups",
+                "git-graph.view",
+                "workbench.action.splitEditorDown"
             ]
         },
         // Показать боковую панеть со ссылками (toggle references)
@@ -282,23 +324,25 @@
                 "workbench.action.toggleSidebarVisibility"
             ]
         },
-        // Показать / скрыть боковую панель (toggle sidebar)
+        // Показать / скрыть открытые редакторы (toggle open editors)
+        {
+            "before": [
+                "<leader>",
+                "t",
+                "o",
+            ],
+            "commands": [
+                "workbench.files.action.focusOpenEditorsView"
+            ]
+        },
+        // Показать / скрыть хлебные крошки (toggle breadcrumbs)
         {
             "before": [
                 "<space>"
             ],
             "commands": [
-                "workbench.action.toggleSidebarVisibility",
-            ]
-        },
-        // Перейти к файлу ....
-        {
-            "before": [
-                "<leader>",
-                "b"
-            ],
-            "commands": [
-                "workbench.action.quickOpen"
+                // "workbench.action.toggleSidebarVisibility",
+                "breadcrumbs.focusAndSelect"
             ]
         },
         {
@@ -365,7 +409,77 @@
                 "2",
                 "s"
             ]
-        }
+        },
+        // Показать список файлов в этот группу
+        {
+            "before": [
+                "<tab>"
+            ],
+            "commands": [
+                "workbench.action.quickOpenPreviousRecentlyUsedEditorInGroup"
+            ]
+        },
+        // Навигация назад по кодовой базе
+        {
+            "before": [
+                "<C-h>"
+            ],
+            "commands": [
+                "workbench.action.navigateBack"
+            ]
+        },
+        // Навигация вперед по кодовой базе
+        {
+            "before": [
+                "<C-l>"
+            ],
+            "commands": [
+                "workbench.action.navigateForward"
+            ]
+        },
+
+        // Vim: создать вертикальный сплит (vertical split)
+        // {
+        //     "before": [
+        //         "<leader>",
+        //         "v",
+        //     ],
+        //     "commands": [
+        //         "workbench.action.splitEditorRight"
+        //     ],
+        // },
+        // Навигация между сплитами в стиле Vim
+        // {
+        //     "before": [
+        //         "<C-h>"
+        //     ],
+        //     "commands": [
+        //         "workbench.action.navigateLeft"
+        //     ]
+        // },
+        // {
+        //     "before": [
+        //         "<C-l>"
+        //     ],
+        //     "commands": [
+        //         "workbench.action.navigateRight"
+        //     ]
+        // },
+    ],
+    "vim.visualModeKeyBindingsNonRecursive": [
+        // Ctrl + D - выделить слово под курсором "editor.action.addSelectionToNextFindMatch"
+        // Найти упоминания в коде (в поиске) (go to find in files)
+        {
+            "before": [
+                "<leader>",
+                "g",
+                "f",
+            ],
+            "commands": [
+                "editor.action.addSelectionToNextFindMatch",
+                "workbench.action.findInFiles",
+            ]
+        },
     ],
     "terminal.integrated.copyOnSelection": true,
     "terminal.integrated.fontWeightBold": "normal",
@@ -393,7 +507,7 @@
     "editor.formatOnSaveMode": "modifications",
     "editor.minimap.enabled": false,
     "gitlens.gitCommands.closeOnFocusOut": true,
-    "python.languageServer": "Pylance",
+    "python.languageServer": "None",
     "workbench.editorAssociations": {
         "*.ipynb": "jupyter-notebook",
         "*.pdf": "latex-workshop-pdf-hook"
@@ -407,9 +521,6 @@
     "git-graph.openNewTabEditorGroup": "Two",
     "editor.unicodeHighlight.ambiguousCharacters": false,
     "notebook.lineNumbers": "on",
-    "cSpell.userWords": [
-        "pydantic"
-    ],
     "jupyter.askForKernelRestart": false,
     "git.autofetch": true,
     "editor.wordWrap": "on",
@@ -418,14 +529,12 @@
     "workbench.editor.enablePreview": false,
     "todo-tree.regex.regex": "(//|%|#|<!--|;|/\\*|^|^[ \\t]*(-|\\d+.))\\s*($TAGS)",
     "todo-tree.general.statusBar": "total",
-    "workbench.colorTheme": "Zenburn",
     "[json]": {
         "editor.defaultFormatter": "vscode.json-language-features"
     },
     "[css]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
-    "workbench.sideBar.location": "left",
     "[c]": {
         "editor.defaultFormatter": "xaver.clang-format"
     },
@@ -441,7 +550,6 @@
         "ESP_ROM_ELF_DIR": "/home/axl/.espressif/tools/esp-rom-elfs/20230320/"
     },
     "idf.gitPath": "git",
-    "workbench.activityBar.location": "top",
     "codeium.enableConfig": {
         "*": true,
         "ansible": true
@@ -455,9 +563,23 @@
     "markdown.marp.pdf.outlines": "headings",
     "markdown.marp.browser": "chrome",
     "continue.enableTabAutocomplete": true,
-    "yaml.schemas": {
-        "/home/axl/.vscode/extensions/continue.continue-1.0.7-linux-x64/config-yaml-schema.json": [
-            ".continue/**/*.yaml"
-        ]
+    "sourcecraft-code-assist.delayedRequestTimeoutMs": 600,
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "remote.SSH.remotePlatform": {
+        "192.168.1.195": "linux"
     },
+    "gitlens.graph.minimap.enabled": false,
+    "gitlens.ai.ollama.url": "http://10.30.40.185:11434",
+    "gitlens.ai.model": "ollama:qwen2.5-coder:32b",
+    "remote.SSH.experimental.chat": false,
+    "workbench.activityBar.location": "top",
+    "window.commandCenter": true,
+    "diffEditor.renderSideBySide": false,
+    "kilo-code.allowedCommands": [
+        "git log",
+        "git diff",
+        "git show"
+    ],
+    "kilo-code.deniedCommands": [],
+    "diffEditor.experimental.showMoves": true,
 }
