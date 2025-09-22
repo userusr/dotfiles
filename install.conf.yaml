@@ -6,8 +6,10 @@
 
 - create:
     - ~/.ssh
-    - ~/.config
+    - ~/.config/Code/User
+    - ~/.config/Cursor/User
     - ~/.local/bin
+    - ~/.fzf
 
 - link:
     ~/.vimrc: home/.vimrc
@@ -21,5 +23,17 @@
     ~/.config/Code/User/settings.json: home/.code_profiles/python/data/User/settings.json
     ~/.config/Code/User/tasks.json: home/.code_profiles/python/data/User/tasks.json
 
+    ~/.config/Cursor/User/snippets: home/.code_profiles/python/data/User/snippets
+    ~/.config/Cursor/User/keybindings.json: home/.code_profiles/python/data/User/keybindings.json
+    ~/.config/Cursor/User/settings.json: home/.code_profiles/python/data/User/settings.json
+    ~/.config/Cursor/User/tasks.json: home/.code_profiles/python/data/User/tasks.json
+
 - shell:
     - [git submodule update --init --recursive, Installing submodules]
+    # git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+    - [cd /home/axl/.fzf && git pull, Update fzf]
+    # git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+    - [cd /home/axl/.pyenv && git pull, Update pyenv]
+    # git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
+    - [cd /home/axl/.pyenv/plugins/pyenv-virtualenv && git pull, Update pyenv-virtualenv]
+    - [curl -fsSL https://fnm.vercel.app/install | bash -s -- --install-dir "/home/$USER/.fnm" --skip-shell, Install fnm]
