@@ -1,17 +1,12 @@
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
-# FZF
-export FZF_BASE="$HOME/.fzf"
-export PATH=$FZF_BASE/bin:$PATH
-source "$FZF_BASE/shell/key-bindings.zsh"
-
 # PYENV
 # [pyenv/pyenv: Simple Python version management](https://github.com/pyenv/pyenv)
-export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
+# export PYENV_ROOT="$HOME/.pyenv"
+# command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+# eval "$(pyenv init -)"
+# eval "$(pyenv virtualenv-init -)"
 
 # latexindent.pl
 # https://github.com/cmhughes/latexindent.pl
@@ -29,6 +24,9 @@ eval "`fnm env`"
 export PATH=/home/axl/.cargo/bin:$PATH
 
 # fzf
+export FZF_BASE="$HOME/.fzf"
+export PATH=$FZF_BASE/bin:$PATH
+# source "$FZF_BASE/shell/key-bindings.zsh"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # platformio
@@ -39,6 +37,9 @@ export ZSH="$HOME/.oh-my-zsh"
 
 # local ruby gems
 export PATH=/home/axl/.local/share/gem/ruby/3.0.0/bin/:$PATH
+
+# local claude code config
+[ -f ~/.claude-code.sh ] && source  ~/.claude-code.sh
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -109,7 +110,7 @@ ZSH_CUSTOM=$HOME/.oh-my-zsh-custom
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git fzf pyenv fnm git-prompt cp z)
+plugins=(git fzf fnm git-prompt cp z)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -139,7 +140,79 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
 # Added by LM Studio CLI (lms)
 export PATH="$PATH:/home/axl/.lmstudio/bin"
+
+function vrg() {
+  if (( $# != 1 )); then
+    echo "Ошибка: требуется ровно один аргумент" >&2
+    return 1
+  fi
+
+  local arg=$1
+  rg --vimgrep -m2 "$arg" | \
+  fzf --preview 'bat --style=numbers --color=always --highlight-line {2} {1} --paging=always' \
+      --delimiter ':' --nth 1,2,3 \
+      --bind "enter:execute(code --goto --new-window {1}:{2} > /dev/tty)"
+}
+
+function clone_and_checkout_git_ssh() {
+  local repo_url="$1"
+  local branch="${2:-master}"
+
+  local start_dir
+  start_dir="$(pwd)"
+  trap 'cd "$start_dir"' EXIT
+
+  local repo_path
+  local repo_name
+  repo_path=$(echo "$repo_url" | sed -E 's#^[^:]+:([^\.]+)\.git$#\1#')
+  repo_name=$(echo "$repo_url" | sed -E 's#.*/([^/]+)\.git#\1#')
+
+  if [[ -z "$repo_path" ]]; then
+    echo "ERROR: Не удалось извлечь путь из SSH-URL: $repo_url"
+    return 1
+  fi
+
+  if [[ -z "$repo_name" ]]; then
+    echo "ERROR: Не удалось извлечь имя из SSH-URL: $repo_url"
+    return 1
+  fi
+
+  safe_branch=$(echo "$branch" | sed -E 's#[^A-Za-z0-9._-]#_#g')
+
+  local full_path="${repo_path}/${repo_name}__${safe_branch}"
+
+  if [ -d "$full_path" ]; then
+    echo "Path '$full_path' exists"
+    code ${full_path}
+    return 0
+  fi
+
+  mkdir -p "$full_path" || {
+    echo "ERROR: Не удалось создать директорию $full_path";
+    return 2;
+  }
+
+  git clone "$repo_url" "$full_path" || {
+    echo "ERROR: git clone завершился с ошибкой для репозитория $repo_url";
+    return 3;
+  }
+
+  cd "$full_path" || {
+    echo "ERROR: Не удалось перейти в директорию $full_path";
+    return 4;
+  }
+
+  git checkout "$branch" || {
+    echo "ERROR: Не удалось выполнить git checkout ветки $branch";
+    return 5;
+  }
+
+  cd "$start_dir" || {
+    echo "ERROR: Не удалось перейти в директорию $start_dir";
+    return 6;
+  }
+
+  code ${full_path}
+}

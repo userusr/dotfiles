@@ -197,9 +197,13 @@
             //     "o",
             // ],
             "commands": [
+                "workbench.action.closePanel",
+                "workbench.action.closeSidebar",
+                "workbench.action.minimizeOtherEditorsHideSidebar",
+                // "workbench.action.toggleSidebarVisibility",
                 "workbench.files.action.collapseExplorerFolders",
                 "workbench.action.closeEditorsInOtherGroups",
-                "workbench.action.closeOtherEditors",
+                // "workbench.action.closeOtherEditors",
                 "git.closeAllDiffEditors",
             ]
         },
@@ -287,12 +291,13 @@
                 "C_Cpp.SwitchHeaderSource"
             ]
         },
-        // Показать боковую патель с git (toggle_git)
+        // Показать боковую патель с git graph (toggle git graph)
         {
             "before": [
                 "<leader>",
                 "t",
-                "g"
+                "g",
+                "g",
             ],
             "commands": [
                 "workbench.action.togglePanel",
@@ -300,6 +305,40 @@
                 "workbench.action.closeAllGroups",
                 "git-graph.view",
                 "workbench.action.splitEditorDown"
+            ]
+        },
+        // Показать боковую патель с git (toggle git graph view)
+        {
+            "before": [
+                "<leader>",
+                "t",
+                "g",
+                "v",
+            ],
+            "commands": [
+                "workbench.view.scm",
+            ]
+        },
+        // Показать открытые файлы (toggle open editors)
+        {
+            "before": [
+                "<leader>",
+                "t",
+                "o",
+            ],
+            "commands": [
+                "workbench.files.action.focusOpenEditorsView"
+            ]
+        },
+        // Показать боковую патель (toggle sidebar)
+        {
+            "before": [
+                "<leader>",
+                "t",
+                "s"
+            ],
+            "commands": [
+                "workbench.action.toggleSidebarVisibility"
             ]
         },
         // Показать боковую панеть со ссылками (toggle references)
@@ -507,7 +546,7 @@
     "editor.formatOnSaveMode": "modifications",
     "editor.minimap.enabled": false,
     "gitlens.gitCommands.closeOnFocusOut": true,
-    "python.languageServer": "None",
+    "python.languageServer": "Pylance",
     "workbench.editorAssociations": {
         "*.ipynb": "jupyter-notebook",
         "*.pdf": "latex-workshop-pdf-hook"
@@ -538,7 +577,7 @@
     "[c]": {
         "editor.defaultFormatter": "xaver.clang-format"
     },
-    "editor.fontFamily": "'JetBrainsMono Nerd Font', 'Droid Sans Mono', 'monospace', monospace",
+    "editor.fontFamily": "'JetBrainsMono Nerd Font', 'Droid Sans Mono',  'Consolas', 'monospace', monospace",
     "[html]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
@@ -582,4 +621,36 @@
     ],
     "kilo-code.deniedCommands": [],
     "diffEditor.experimental.showMoves": true,
+    "[dockercompose]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2,
+        "editor.autoIndent": "advanced",
+        "editor.defaultFormatter": "redhat.vscode-yaml"
+    },
+    "[github-actions-workflow]": {
+        "editor.defaultFormatter": "redhat.vscode-yaml"
+    },
+    "yaml.schemas": {
+        "file:///Users/a.shamin/.vscode/extensions/continue.continue-1.2.11-darwin-arm64/config-yaml-schema.json": [
+            ".continue/**/*.yaml"
+        ],
+        "file:///Users/a.shamin/.vscode/extensions/continue.continue-1.2.14-darwin-arm64/config-yaml-schema.json": [
+            ".continue/**/*.yaml"
+        ],
+        "file:///Users/a.shamin/.vscode/extensions/continue.continue-1.2.15-darwin-arm64/config-yaml-schema.json": [
+            ".continue/**/*.yaml"
+        ],
+        "file:///Users/a.shamin/.vscode/extensions/continue.continue-1.2.16-darwin-arm64/config-yaml-schema.json": [
+            ".continue/**/*.yaml"
+        ]
+    },
+    "cSpell.userWords": [
+        "venv",
+    ],
+    "makefile.configureOnOpen": false,
+    "continue.telemetryEnabled": false,
+    "git.confirmSync": false,
+    "workbench.sideBar.location": "right",
+    "git.ignoreRebaseWarning": true,
+    "git.replaceTagsWhenPull": true,
 }
