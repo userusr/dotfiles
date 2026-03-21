@@ -31,9 +31,9 @@
 - shell:
     - [git submodule update --init --recursive, Installing submodules]
     # git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-    - [cd /home/axl/.fzf && git pull, Update fzf]
+    - [cd ~/.fzf && git pull, Update fzf]
     # git clone https://github.com/pyenv/pyenv.git ~/.pyenv
-    - [cd /home/axl/.pyenv && git pull, Update pyenv]
+    - [cd ~/.pyenv && git pull, Update pyenv]
     # git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
-    - [cd /home/axl/.pyenv/plugins/pyenv-virtualenv && git pull, Update pyenv-virtualenv]
-    - [curl -fsSL https://fnm.vercel.app/install | bash -s -- --install-dir "/home/$USER/.fnm" --skip-shell, Install fnm]
+    - [cd ~/.pyenv/plugins/pyenv-virtualenv && git pull, Update pyenv-virtualenv]
+    - [curl -fsSL https://fnm.vercel.app/install | bash -s -- --install-dir "$HOME/.fnm" --skip-shell, Install fnm]

@@ -16,12 +16,12 @@ export PATH=$LATEXINDENT_BASE:$PATH
 # fnm
 # Fast Node Manager
 # https://github.com/Schniz/fnm
-export PATH=/home/axl/.fnm:$PATH
+export PATH=$HOME/.fnm:$PATH
 eval "`fnm env`"
 
 # rust
 # https://rustup.rs/
-export PATH=/home/axl/.cargo/bin:$PATH
+export PATH=$HOME/.cargo/bin:$PATH
 
 # fzf
 export FZF_BASE="$HOME/.fzf"
@@ -30,13 +30,13 @@ export PATH=$FZF_BASE/bin:$PATH
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # platformio
-export PATH=/home/axl/.platformio/penv/bin:$PATH
+export PATH=$HOME/.platformio/penv/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
 # local ruby gems
-export PATH=/home/axl/.local/share/gem/ruby/3.0.0/bin/:$PATH
+export PATH=$HOME/.local/share/gem/ruby/3.0.0/bin/:$PATH
 
 # local claude code config
 [ -f ~/.claude-code.sh ] && source  ~/.claude-code.sh
@@ -141,7 +141,7 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # Added by LM Studio CLI (lms)
-export PATH="$PATH:/home/axl/.lmstudio/bin"
+export PATH="$PATH:$HOME/.lmstudio/bin"
 
 function vrg() {
   if (( $# != 1 )); then
