@@ -1,0 +1,9 @@
+---
+
+- shell:
+    - command: |
+        sudo apt update
+        xargs -a linux/packages.txt sudo apt install -y
+      description: Install packages from packages.txt
+      stdout: true
+      stderr: true

@@ -146,5 +146,13 @@
     {
         "key": "shift+cmd+h",
         "command": "-workbench.action.replaceInFiles"
+    },
+    {
+        "key": "shift+enter",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": {
+            "text": "\u001b\r"
+        },
+        "when": "terminalFocus"
     }
 ]

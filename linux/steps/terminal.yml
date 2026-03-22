@@ -1,0 +1,72 @@
+---
+- defaults:
+    link:
+      relink: true
+
+- clean: ["~"]
+
+- create:
+    - ~/.ssh
+    - ~/.config/Code/User
+    - ~/.config/Cursor/User
+    - ~/.local/bin
+    - ~/.fzf
+    - ~/.pyenv
+
+- shell:
+    - command: git submodule update --init --recursive
+      description: Installing submodules
+      stdout: true
+      stderr: true
+
+    # https://ohmyz.sh
+    - command: |
+        [ -d ~/.oh-my-zsh ] || sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" || true
+      description: Install Oh-My-Zsh
+      stdout: true
+      stderr: true
+
+    - command: |
+        [ -d ~/.fzf/.git ] || git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+        cd ~/.fzf && git pull
+      description: Install/Update fzf
+      stdout: true
+      stderr: true
+
+    - command: |
+        [ -d ~/.pyenv/.git ] || git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+        cd ~/.pyenv && git pull
+      description: Install/Update pyenv
+      stdout: true
+      stderr: true
+
+    - command: |
+        [ -d ~/.pyenv/plugins/pyenv-virtualenv ] || git clone https://github.com/pyenv/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
+        cd ~/.pyenv/plugins/pyenv-virtualenv && git pull
+      description: Install/Update pyenv-virtualenv plugin
+      stdout: true
+      stderr: true
+
+    - command: curl -fsSL https://fnm.vercel.app/install | bash -s -- --install-dir "$HOME/.fnm" --skip-shell
+      description: Install fnm
+      stdout: true
+      stderr: true
+
+- link:
+    ~/.vimrc: home/.vimrc
+    ~/.gitconfig: home/.gitconfig
+    ~/.tmux.conf: home/.tmux.conf
+    ~/.zshrc: home/.zshrc
+    ~/.oh-my-zsh-custom: home/.oh-my-zsh-custom
+    ~/.config/zed/settings.json: home/.config/zed/settings.json
+    ~/.config/zed/keymap.json: home/.config/zed/keymap.json
+
+    ~/.config/Code/User/snippets: home/.code_profiles/python/data/User/snippets
+    ~/.config/Code/User/keybindings.json: home/.code_profiles/python/data/User/keybindings.json
+    ~/.config/Code/User/settings.json: home/.code_profiles/python/data/User/settings.json
+    ~/.config/Code/User/tasks.json: home/.code_profiles/python/data/User/tasks.json
+
+    ~/.config/Cursor/User/snippets: home/.code_profiles/python/data/User/snippets
+    ~/.config/Cursor/User/keybindings.json: home/.code_profiles/python/data/User/keybindings.json
+    ~/.config/Cursor/User/settings.json: home/.code_profiles/python/data/User/settings.json
+    ~/.config/Cursor/User/tasks.json: home/.code_profiles/python/data/User/tasks.json

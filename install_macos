@@ -19,7 +19,13 @@ cd "$BASEDIR"
 git submodule sync --quiet --recursive
 git submodule update --init --recursive
 
-# Linking dotfiles:
+# Manual installation (step by step):
+#   ./dotbot/bin/dotbot -d . --plugin-dir dotbot-brewfile -c macos/steps/terminal.yml
+#   ./dotbot/bin/dotbot -d . --plugin-dir dotbot-brewfile -c macos/steps/dependencies.yml
+#   ./dotbot/bin/dotbot -d . --plugin-dir dotbot-brewfile -c macos/steps/vscode.yml
+#
+# Or install all at once:
+#   ./install_macos
 
 run_dotbot () {
   local config

@@ -1,10 +1,15 @@
 ---
 - clean: ["~"]
 
-# See https://ohmyz.sh
 - shell:
+    - command: git submodule update --init --recursive
+      description: Installing submodules
+      stdout: true
+      stderr: true
+
+    # See https://ohmyz.sh
     - command: |
-        sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" || true
+        [ -d ~/.oh-my-zsh ] || sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" || true
       description: Install Oh-My-Zsh
       stdout: true
       stderr: true
