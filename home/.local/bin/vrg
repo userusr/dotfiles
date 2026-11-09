@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+if (( $# != 1 )); then
+  echo "Ошибка: требуется ровно один аргумент" >&2
+  exit 1
+fi
+
+arg=$1
+rg --vimgrep -m2 "$arg" | \
+fzf --preview 'bat --style=numbers --color=always --highlight-line {2} {1} --paging=always' \
+    --delimiter ':' --nth 1,2,3 \
+    --bind "enter:execute(code --goto --new-window {1}:{2} > /dev/tty)"

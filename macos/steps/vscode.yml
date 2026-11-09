@@ -3,21 +3,35 @@
 - link:
     
     "~/Library/Application Support/Code/User/settings.json":
-      path: home/.code_profiles/python/data/User/settings.json
+      path: home/.code_profiles/default/data/User/settings.json
       force: true
       create: true
     
     "~/Library/Application Support/Code/User/keybindings.json":
-      path: home/.code_profiles/python/data/User/keybindings.json
+      path: home/.code_profiles/default/data/User/keybindings.json
       force: true
       create: true
     
     "~/Library/Application Support/Code/User/tasks.json":
-      path: home/.code_profiles/python/data/User/tasks.json
+      path: home/.code_profiles/default/data/User/tasks.json
       force: true
       create: true
     
     "~/Library/Application Support/Code/User/snippets":
-      path: home/.code_profiles/python/data/User/snippets
+      path: home/.code_profiles/default/data/User/snippets
       force: true
       create: true
+
+- shell:
+    - command: bash scripts/install_vscode_extensions home/.code_profiles/default/extensions.txt
+      description: Install VS Code extensions for the default profile
+      stdout: true
+      stderr: true
+    - command: bash scripts/install_vscode_extensions home/.code_profiles/default/extensions.txt python
+      description: Install default VS Code extensions for the python profile
+      stdout: true
+      stderr: true
+    - command: bash scripts/install_vscode_extensions home/.code_profiles/python/extensions.txt python
+      description: Install VS Code extensions for the python profile
+      stdout: true
+      stderr: true

@@ -22,6 +22,7 @@ git submodule update --init --recursive
 # Manual installation (step by step):
 #   ./dotbot/bin/dotbot -d . -c linux/steps/dependencies.yml
 #   ./dotbot/bin/dotbot -d . -c linux/steps/terminal.yml
+#   ./dotbot/bin/dotbot -d . -c linux/steps/vscode.yml
 #
 # Or install all at once:
 #   ./install_linux
@@ -37,3 +38,4 @@ run_dotbot () {
 
 run_dotbot 'linux/steps/dependencies.yml' || true
 run_dotbot 'linux/steps/terminal.yml' || true
+run_dotbot 'linux/steps/vscode.yml' || true

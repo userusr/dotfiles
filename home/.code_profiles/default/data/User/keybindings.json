@@ -1,0 +1,211 @@
+[
+    // Записи с минусом перед command отключают стандартную привязку.
+    // «Ctrl+K, затем S» означает последовательное нажатие двух сочетаний.
+
+    // === Сохранение файлов ===
+    // Ctrl+K, затем S: отключить стандартное сохранение файла без форматирования.
+    {
+        "key": "ctrl+k s",
+        "command": "-workbench.action.files.saveWithoutFormatting"
+    },
+    // Ctrl+K, затем S: сохранить все открытые изменённые файлы.
+    {
+        "key": "ctrl+k s",
+        "command": "workbench.action.files.saveAll"
+    },
+
+    // === Проводник и боковая панель ===
+    // Ctrl+K, затем T: открыть проводник файлов.
+    {
+        "key": "ctrl+k t",
+        "command": "workbench.view.explorer"
+    },
+    // Ctrl+Shift+E: отключить стандартное открытие проводника файлов.
+    {
+        "key": "ctrl+shift+e",
+        "command": "-workbench.view.explorer"
+    },
+    // F1: показать или скрыть основную боковую панель.
+    {
+        "key": "f1",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "workbench.action.toggleSidebarVisibility"
+            ]
+        }
+    },
+    // Ctrl+B: отключить переключение боковой панели; сочетание используется как префикс команд терминала.
+    {
+        "key": "ctrl+b",
+        "command": "-workbench.action.toggleSidebarVisibility"
+    },
+    // F1: отключить стандартный вызов палитры команд; клавиша переключает боковую панель.
+    {
+        "key": "f1",
+        "command": "-workbench.action.showCommands"
+    },
+    // Ctrl+Shift+E: отключить выделение текста до конца строки в поле ввода.
+    {
+        "key": "ctrl+shift+e",
+        "command": "-cursorLineEndSelect",
+        "when": "textInputFocus"
+    },
+
+    // === Git и управление версиями ===
+    // Ctrl+K, затем G: открыть панель управления версиями, когда доступен провайдер SCM.
+    {
+        "key": "ctrl+k g",
+        "command": "workbench.view.scm",
+        "when": "workbench.scm.active"
+    },
+    // Ctrl+Shift+G: отключить стандартное открытие панели управления версиями.
+    {
+        "key": "ctrl+shift+g",
+        "command": "-workbench.view.scm",
+        "when": "workbench.scm.active"
+    },
+
+    // === Поиск и замена по файлам ===
+    // Cmd+Shift+F: отключить стандартный поиск по файлам.
+    {
+        "key": "shift+cmd+f",
+        "command": "-workbench.action.findInFiles"
+    },
+    // Ctrl+K, затем F: открыть поиск по файлам.
+    {
+        "key": "ctrl+k f",
+        "command": "workbench.action.findInFiles"
+    },
+    // Ctrl+K, затем R: открыть поиск и замену по файлам.
+    {
+        "key": "ctrl+k r",
+        "command": "workbench.action.replaceInFiles"
+    },
+    // Cmd+Shift+H: отключить стандартный поиск и замену по файлам.
+    {
+        "key": "shift+cmd+h",
+        "command": "-workbench.action.replaceInFiles"
+    },
+
+    // === Встроенный терминал ===
+    // Ctrl+B, затем N: переключить фокус на следующий терминал.
+    {
+        "key": "ctrl+b n",
+        "command": "workbench.action.terminal.focusNext"
+    },
+    // Ctrl+B, затем P: переключить фокус на предыдущий терминал.
+    {
+        "key": "ctrl+b p",
+        "command": "workbench.action.terminal.focusPrevious"
+    },
+    // Ctrl+B, затем X: завершить активный терминал.
+    {
+        "key": "ctrl+b x",
+        "command": "workbench.action.terminal.kill"
+    },
+    // Shift+Enter: передать в активный терминал Escape и возврат каретки (\u001b\r).
+    {
+        "key": "shift+enter",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": {
+            "text": "\u001b\r"
+        },
+        "when": "terminalFocus"
+    },
+
+    // === VSCodeVim: отключение перехвата сочетаний ===
+    // Ctrl+P: отключить обработку сочетания расширением Vim в редакторе и командной/поисковой строке Vim.
+    {
+        "key": "ctrl+p",
+        "command": "-extension.vim_ctrl+p",
+        "when": "editorTextFocus && vim.active && vim.use<C-p> && !inDebugRepl || vim.active && vim.use<C-p> && !inDebugRepl && vim.mode == 'CommandlineInProgress' || vim.active && vim.use<C-p> && !inDebugRepl && vim.mode == 'SearchInProgressMode'"
+    },
+    // Ctrl+Left: отключить обработку сочетания расширением Vim вне режима вставки.
+    {
+        "key": "ctrl+left",
+        "command": "-extension.vim_ctrl+left",
+        "when": "editorTextFocus && vim.active && !inDebugRepl && vim.mode != 'Insert'"
+    },
+
+    // === Ctrl+/ и Ctrl+I: отключение команд подсказок, чата и терминала ===
+    // Ctrl+/: отключить принятие встроенного автодополнения в представлении специальных возможностей.
+    {
+        "key": "ctrl+/",
+        "command": "-editor.action.accessibleViewAcceptInlineCompletion",
+        "when": "accessibleViewIsShown && accessibleViewCurrentProviderId == 'inlineCompletions'"
+    },
+    // Ctrl+/: отключить запуск команды из чата в терминале при включённых специальных возможностях.
+    {
+        "key": "ctrl+/",
+        "command": "-workbench.action.chat.runInTerminal",
+        "when": "accessibilityModeEnabled && hasChatProvider && inChat"
+    },
+    // Ctrl+/: отключить переключение режима пояснений в открытом списке подсказок.
+    {
+        "key": "ctrl+/",
+        "command": "-toggleExplainMode",
+        "when": "suggestWidgetVisible"
+    },
+    // Ctrl+/: отключить стандартную отправку управляющей последовательности в терминал.
+    {
+        "key": "ctrl+/",
+        "command": "-workbench.action.terminal.sendSequence",
+        "when": "terminalFocus"
+    },
+    // Ctrl+I: отключить запуск голосового ввода в чате.
+    {
+        "key": "ctrl+i",
+        "command": "-workbench.action.chat.startVoiceChat",
+        "when": "chatIsEnabled && hasSpeechProvider && inChatInput && !chatSessionRequestInProgress && !editorFocus && !notebookEditorFocused && !scopedVoiceChatGettingReady && !speechToTextInProgress || chatIsEnabled && hasSpeechProvider && inlineChatFocused && !chatSessionRequestInProgress && !editorFocus && !notebookEditorFocused && !scopedVoiceChatGettingReady && !speechToTextInProgress"
+    },
+    // Ctrl+I: отключить остановку голосового ввода с отправкой сообщения в чат.
+    {
+        "key": "ctrl+i",
+        "command": "-workbench.action.chat.stopListeningAndSubmit",
+        "when": "inChatInput && voiceChatInProgress && scopedVoiceChatInProgress == 'editor' || inChatInput && voiceChatInProgress && scopedVoiceChatInProgress == 'inline' || inChatInput && voiceChatInProgress && scopedVoiceChatInProgress == 'quick' || inChatInput && voiceChatInProgress && scopedVoiceChatInProgress == 'view' || inlineChatFocused && voiceChatInProgress && scopedVoiceChatInProgress == 'editor' || inlineChatFocused && voiceChatInProgress && scopedVoiceChatInProgress == 'inline' || inlineChatFocused && voiceChatInProgress && scopedVoiceChatInProgress == 'quick' || inlineChatFocused && voiceChatInProgress && scopedVoiceChatInProgress == 'view'"
+    },
+
+    // === Ctrl+Cmd+стрелки: отключение перемещения редакторов и изменения панелей ===
+    // Ctrl+Cmd+Right: отключить перенос редактора в следующую группу.
+    {
+        "key": "ctrl+cmd+right",
+        "command": "-workbench.action.moveEditorToNextGroup"
+    },
+    // Ctrl+Cmd+Right: отключить фоновое подтверждение элемента в меню быстрого выбора.
+    {
+        "key": "ctrl+cmd+right",
+        "command": "-quickInput.acceptInBackground",
+        "when": "cursorAtEndOfQuickInputBox && inQuickInput && quickInputType == 'quickPick' || inQuickInput && !inputFocus && quickInputType == 'quickPick'"
+    },
+    // Ctrl+Cmd+Right: отключить изменение размера панели терминала вправо.
+    {
+        "key": "ctrl+cmd+right",
+        "command": "-workbench.action.terminal.resizePaneRight",
+        "when": "terminalFocus && terminalHasBeenCreated || terminalFocus && terminalProcessSupported"
+    },
+    // Ctrl+Cmd+Left: отключить изменение размера панели терминала влево.
+    {
+        "key": "ctrl+cmd+left",
+        "command": "-workbench.action.terminal.resizePaneLeft",
+        "when": "terminalFocus && terminalHasBeenCreated || terminalFocus && terminalProcessSupported"
+    },
+    // Ctrl+Cmd+Left: отключить перенос редактора в предыдущую группу.
+    {
+        "key": "ctrl+cmd+left",
+        "command": "-workbench.action.moveEditorToPreviousGroup"
+    },
+
+    // === Отключение закрытия окна и рабочего пространства ===
+    // Ctrl+Q: отключить закрытие VS Code этим сочетанием.
+    {
+        "key": "ctrl+q",
+        "command": "-workbench.action.quit"
+    },
+    // Cmd+K, затем F: отключить закрытие открытой папки или рабочего пространства.
+    {
+        "key": "cmd+k f",
+        "command": "-workbench.action.closeFolder",
+        "when": "emptyWorkspaceSupport && workbenchState != 'empty'"
+    }
+]

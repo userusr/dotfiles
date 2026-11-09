@@ -7,7 +7,6 @@
 
 - create:
     - ~/.ssh
-    - ~/.config/Code/User
     - ~/.config/Cursor/User
     - ~/.local/bin
     - ~/.fzf
@@ -53,6 +52,12 @@
       stderr: true
 
 - link:
+    ~/.local/bin/vrg:
+      path: home/.local/bin/vrg
+      create: true
+    ~/.local/bin/clone_and_checkout_git_ssh:
+      path: home/.local/bin/clone_and_checkout_git_ssh
+      create: true
     ~/.vimrc: home/.vimrc
     ~/.gitconfig: home/.gitconfig
     ~/.tmux.conf: home/.tmux.conf
@@ -60,13 +65,11 @@
     ~/.oh-my-zsh-custom: home/.oh-my-zsh-custom
     ~/.config/zed/settings.json: home/.config/zed/settings.json
     ~/.config/zed/keymap.json: home/.config/zed/keymap.json
+    ~/.config/opencode/opencode.json:
+      path: home/.config/opencode/opencode.json
+      create: true
 
-    ~/.config/Code/User/snippets: home/.code_profiles/python/data/User/snippets
-    ~/.config/Code/User/keybindings.json: home/.code_profiles/python/data/User/keybindings.json
-    ~/.config/Code/User/settings.json: home/.code_profiles/python/data/User/settings.json
-    ~/.config/Code/User/tasks.json: home/.code_profiles/python/data/User/tasks.json
-
-    ~/.config/Cursor/User/snippets: home/.code_profiles/python/data/User/snippets
-    ~/.config/Cursor/User/keybindings.json: home/.code_profiles/python/data/User/keybindings.json
-    ~/.config/Cursor/User/settings.json: home/.code_profiles/python/data/User/settings.json
-    ~/.config/Cursor/User/tasks.json: home/.code_profiles/python/data/User/tasks.json
+    ~/.config/Cursor/User/snippets: home/.code_profiles/default/data/User/snippets
+    ~/.config/Cursor/User/keybindings.json: home/.code_profiles/default/data/User/keybindings.json
+    ~/.config/Cursor/User/settings.json: home/.code_profiles/default/data/User/settings.json
+    ~/.config/Cursor/User/tasks.json: home/.code_profiles/default/data/User/tasks.json

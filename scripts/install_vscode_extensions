@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Install the default profile's extensions:
+#   ./scripts/install_vscode_extensions home/.code_profiles/default/extensions.txt
+# Install the base and Python additions into the python profile:
+#   ./scripts/install_vscode_extensions home/.code_profiles/default/extensions.txt python
+#   ./scripts/install_vscode_extensions home/.code_profiles/python/extensions.txt python
+# Exported profile lists include all installed extensions. Remove the base IDs
+# before saving a named profile's additions to its extensions.txt.
+
+# Omit the profile name to install into VS Code's default profile.
+if (( $# < 1 || $# > 2 )); then
+  echo "Usage: $0 <extensions.txt> [profile-name]" >&2
+  exit 1
+fi
+
+extensions_file="$1"
+if [[ ! -f "$extensions_file" ]]; then
+  echo "Extension list not found: $extensions_file" >&2
+  exit 1
+fi
+
+if ! command -v code >/dev/null 2>&1; then
+  echo "VS Code CLI 'code' not found; skipping extension installation." >&2
+  exit 0
+fi
+
+# Extension-management commands cannot create profiles themselves.
+if (( $# == 2 )) && ! code --profile "$2" --list-extensions >/dev/null 2>&1; then
+  code --profile "$2" --new-window
+  profile_ready=false
+  for (( attempt=0; attempt<30; attempt++ )); do
+    if code --profile "$2" --list-extensions >/dev/null 2>&1; then
+      profile_ready=true
+      break
+    fi
+    sleep 1
+  done
+  if [[ "$profile_ready" != true ]]; then
+    echo "VS Code profile is unavailable: $2" >&2
+    exit 1
+  fi
+fi
+
+failed_extensions=()
+while IFS= read -r extension || [[ -n "$extension" ]]; do
+  extension="${extension%$'\r'}"
+  [[ -z "$extension" || "$extension" == \#* ]] && continue
+
+  if (( $# == 2 )); then
+    if ! code --profile "$2" --install-extension "$extension"; then
+      failed_extensions+=("$extension")
+    fi
+  else
+    if ! code --install-extension "$extension"; then
+      failed_extensions+=("$extension")
+    fi
+  fi
+done < "$extensions_file"
+
+if (( ${#failed_extensions[@]} > 0 )); then
+  printf 'Failed to install extension: %s\n' "${failed_extensions[@]}" >&2
+  exit 1
+fi

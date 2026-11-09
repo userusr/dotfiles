@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+repo_url="$1"
+branch="${2:-master}"
+
+start_dir="$(pwd)"
+
+repo_path=$(echo "$repo_url" | sed -E 's#^[^:]+:([^\.]+)\.git$#\1#')
+repo_name=$(echo "$repo_url" | sed -E 's#.*/([^/]+)\.git#\1#')
+
+if [[ -z "$repo_path" ]]; then
+  echo "ERROR: Не удалось извлечь путь из SSH-URL: $repo_url"
+  exit 1
+fi
+
+if [[ -z "$repo_name" ]]; then
+  echo "ERROR: Не удалось извлечь имя из SSH-URL: $repo_url"
+  exit 1
+fi
+
+safe_branch=$(echo "$branch" | sed -E 's#[^A-Za-z0-9._-]#_#g')
+
+full_path="${repo_path}/${repo_name}__${safe_branch}"
+
+if [ -d "$full_path" ]; then
+  echo "Path '$full_path' exists"
+  code "$full_path"
+  exit 0
+fi
+
+mkdir -p "$full_path" || {
+  echo "ERROR: Не удалось создать директорию $full_path";
+  exit 2;
+}
+
+git clone "$repo_url" "$full_path" || {
+  echo "ERROR: git clone завершился с ошибкой для репозитория $repo_url";
+  exit 3;
+}
+
+cd "$full_path" || {
+  echo "ERROR: Не удалось перейти в директорию $full_path";
+  exit 4;
+}
+
+git checkout "$branch" || {
+  echo "ERROR: Не удалось выполнить git checkout ветки $branch";
+  exit 5;
+}
+
+cd "$start_dir" || {
+  echo "ERROR: Не удалось перейти в директорию $start_dir";
+  exit 6;
+}
+
+code "$full_path"

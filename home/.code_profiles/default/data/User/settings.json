@@ -1,21 +1,179 @@
 {
-    "platformio-ide.autoCloseSerialMonitor": true,
-    "platformio-ide.forceUploadAndMonitor": true,
-    "files.trimTrailingWhitespace": false,
-    "editor.renderWhitespace": "all",
-    "telemetry.telemetryLevel": "off",
+    // === VS Code: интерфейс, окна и вкладки ===
     "workbench.editor.showTabs": "single",
     "workbench.editor.showIcons": false,
+    // "workbench.layoutControl.enabled": false,
     "workbench.editor.labelFormat": "medium",
+    "window.zoomLevel": 0,
+    "window.restoreWindows": "all",
+    "window.openFoldersInNewWindow": "on",
+    "workbench.editorAssociations": {
+        "*.ipynb": "jupyter-notebook",
+        "*.pdf": "latex-workshop-pdf-hook"
+    },
+    "workbench.startupEditor": "none",
+    "window.customTitleBarVisibility": "auto",
+    "window.menuBarVisibility": "compact",
+    "workbench.activityBar.location": "top",
+    "window.commandCenter": true,
+    "workbench.sideBar.location": "right",
+
+    // === VS Code: редактор, отображение текста и автодополнение ===
+    "editor.renderWhitespace": "all",
     "editor.definitionLinkOpensInPeek": true,
     "editor.bracketPairColorization.enabled": true,
     "editor.guides.bracketPairs": "active",
+    "editor.fontSize": 14,
+    // https://code.visualstudio.com/docs/editing/editingevolved#_breadcrumb-keyboard-navigation
+    // Ctrl+Shift+.  select that last element and open a dropdown
+    // Ctrl+Shift+;  focus the last element
+    "breadcrumbs.enabled": true,
+    "editor.rulers": [
+        80
+    ],
+    "editor.renderControlCharacters": true,
+    "editor.minimap.size": "fit",
+    "editor.snippetSuggestions": "top",
+    "editor.tabCompletion": "on",
+    "editor.quickSuggestions": {
+        "other": "on",
+        "comments": "off",
+        "strings": "off"
+    },
+    "editor.suggestSelection": "first",
+    "editor.formatOnSaveMode": "modifications",
+    "editor.minimap.enabled": false,
+    "editor.unicodeHighlight.ambiguousCharacters": false,
+    "editor.wordWrap": "on",
+    "editor.fontFamily": "'JetBrainsMono Nerd Font', 'Droid Sans Mono',  'Consolas', 'monospace', monospace",
+
+    // === VS Code: файлы и проводник ===
+    "files.trimTrailingWhitespace": false,
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/node_modules/*/**": true,
+        "**/.venv/**": true,
+        "**/venv/**": true
+    },
+    "explorer.confirmDelete": false,
+
+    // === VS Code: встроенный терминал ===
+    "terminal.integrated.fontSize": 12,
+    "terminal.integrated.enablePersistentSessions": true,
+    "terminal.integrated.persistentSessionReviveProcess": "onExitAndWindowClose",
+    "terminal.integrated.copyOnSelection": true,
+    "terminal.integrated.fontWeightBold": "normal",
+
+    // === VS Code: телеметрия и рекомендации расширений ===
+    "telemetry.telemetryLevel": "off",
+    "extensions.ignoreRecommendations": true,
+
+    // === Git, SCM и просмотр изменений ===
+    // выбор файла в SCM мышью или Enter открывает сам рабочий файл вместо diff Changes
+    "git.openDiffOnClick": false,
+    "[git-commit]": {
+        "editor.rulers": [
+            72,
+            50
+        ],
+        "editor.wordWrap": "off"
+    },
+    "diffEditor.ignoreTrimWhitespace": false,
+    "scm.alwaysShowRepositories": true,
+    "git.autofetch": true,
+    "diffEditor.renderSideBySide": false,
+    "diffEditor.experimental.showMoves": true,
+    "git.confirmSync": false,
+    "git.ignoreRebaseWarning": true,
+    "git.replaceTagsWhenPull": true,
+
+    // === GitLens ===
+    "gitlens.gitCommands.closeOnFocusOut": true,
+    "gitlens.graph.minimap.enabled": false,
+
+    // === Git Graph ===
+    "git-graph.openNewTabEditorGroup": "Two",
+
+    // === Git Blame ===
+    "gitblame.inlineMessageEnabled": true,
+
+    // === Project Manager ===
+    "projectManager.tags.collapseItems": "startCollapsed",
+    "projectManager.git.baseFolders": [],
+    "projectManager.checkInvalidPathsBeforeListing": false,
+    "projectManager.git.ignoredFolders": [
+        "node_modules",
+        "out",
+        "typings",
+        "test",
+        ".haxelib",
+        "dotbot"
+    ],
+
+    // === Code Spell Checker: проверка орфографии ===
     "cSpell.language": "en,ru",
-    "keyboard.dispatch": "keyCode",
+    "cSpell.userWords": [],
+
+    // === Todo Tree: метки задач в коде ===
+    "todo-tree.regex.regex": "(//|%|#|<!--|;|/\\*|^|^[ \\t]*(-|\\d+.))\\s*($TAGS)",
+    "todo-tree.general.statusBar": "total",
+    "todo-tree.general.tags": [
+        "BUG",
+        "HACK",
+        "FIXME",
+        "TODO",
+        "XXX",
+        "[ ]",
+        "[x]",
+        "FIXME"
+    ],
+
+    // === Rewrap и Trailing Spaces: переносы и пробелы ===
     "rewrap.autoWrap.enabled": false,
     "trailing-spaces.highlightCurrentLine": false,
+
+    // === Python, Pylance и Ruff ===
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+    },
+    "python.languageServer": "Pylance",
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "python.analysis.typeCheckingMode": "standard",
+
+    // === Jupyter и notebooks ===
     "notebook.formatOnSave.enabled": true,
-    "scss.lint.unknownAtRules": "ignore",
+    "notebook.codeActionsOnSave": {
+        "notebook.source.fixAll": "explicit"
+    },
+    "notebook.cellToolbarLocation": {
+        "default": "right",
+        "jupyter-notebook": "left"
+    },
+    "notebook.lineNumbers": "on",
+    "jupyter.askForKernelRestart": false,
+
+    // === Go ===
+    "go.formatTool": "goimports",
+    "go.toolsManagement.autoUpdate": true,
+
+    // === JSON и JSON with Comments ===
+    "[jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+
+    // === Prettier: форматирование ===
+    "prettier.configPath": "prettier.config.cjs",
+    "prettier.requireConfig": true,
+
+    // === ESLint: линтинг и форматирование ===
+    "eslint.useFlatConfig": true,
+    "eslint.format.enable": true,
+
+    // === Nuxtr: шаблоны Vue и Nuxt ===
     "nuxtr.vueFiles.template.defaultLanguage": "html",
     "nuxtr.vueFiles.firstTag": "script",
     "nuxtr.vueFiles.script.type": "setup",
@@ -23,36 +181,9 @@
     "nuxtr.vueFiles.style.addStyleTag": true,
     "nuxtr.vueFiles.style.alwaysScoped": true,
     "nuxtr.piniaFiles.defaultTemplate": "setup",
-    "terminal.integrated.fontSize": 12,
-    "editor.fontSize": 14,
-    "window.zoomLevel": 0,
-    "prettier.configPath": "prettier.config.cjs",
-    "prettier.requireConfig": true,
-    "eslint.useFlatConfig": true,
-    "eslint.format.enable": true,
-    "gitblame.inlineMessageEnabled": true,
-    // https://code.visualstudio.com/docs/editing/editingevolved#_breadcrumb-keyboard-navigation
-    // Ctrl+Shift+.  select that last element and open a dropdown
-    // Ctrl+Shift+;  focus the last element
-    "breadcrumbs.enabled": true,
-    // "workbench.layoutControl.enabled": false,
-    "editor.rulers": [
-        80
-    ],
-    "[python]": {
-        "editor.defaultFormatter": "charliermarsh.ruff",
-    },
-    "notebook.codeActionsOnSave": {
-        "notebook.source.fixAll": "explicit"
-    },
-    "[markdown]": {
-        "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
-        "editor.formatOnSave": true,
-        "editor.formatOnPaste": true
-    },
-    "[jsonc]": {
-        "editor.defaultFormatter": "vscode.json-language-features"
-    },
+
+    // === Веб-разработка: TypeScript, Vue, HTML, CSS и SCSS ===
+    "scss.lint.unknownAtRules": "ignore",
     "[typescriptreact][typescript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.formatOnSave": true,
@@ -77,16 +208,26 @@
             80
         ],
     },
-    "[git-commit]": {
-        "editor.rulers": [
-            72,
-            50
-        ],
-        "editor.wordWrap": "off"
+    "[css]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
-    "[cpp]": {
-        "editor.defaultFormatter": "xaver.clang-format"
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
+    "[typescript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+
+    // === Markdown и Marp: документы и презентации ===
+    "[markdown]": {
+        "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": true
+    },
+    "markdown.marp.pdf.outlines": "headings",
+    "markdown.marp.browser": "chrome",
+
+    // === LaTeX ===
     "[latex]": {
         "editor.rulers": [
             100
@@ -96,6 +237,80 @@
         "editor.wordWrap": "on",
         "editor.wordWrapColumn": 100
     },
+
+    // === C и C++: clang-format ===
+    "[cpp]": {
+        "editor.defaultFormatter": "xaver.clang-format"
+    },
+    "[c]": {
+        "editor.defaultFormatter": "xaver.clang-format"
+    },
+
+    // === PlatformIO ===
+    "platformio-ide.autoCloseSerialMonitor": true,
+    "platformio-ide.forceUploadAndMonitor": true,
+
+    // === ESP-IDF: пути и инструменты ===
+    "idf.espIdfPath": "/home/axl/.esp/esp-idf",
+    "idf.toolsPath": "/home/axl/.espressif",
+    "idf.customExtraPaths": "/home/axl/.espressif/tools/xtensa-esp-elf-gdb/12.1_20221002/xtensa-esp-elf-gdb/bin:/home/axl/.espressif/tools/riscv32-esp-elf-gdb/12.1_20221002/riscv32-esp-elf-gdb/bin:/home/axl/.espressif/tools/xtensa-esp32-elf/esp-12.2.0_20230208/xtensa-esp32-elf/bin:/home/axl/.espressif/tools/xtensa-esp32s2-elf/esp-12.2.0_20230208/xtensa-esp32s2-elf/bin:/home/axl/.espressif/tools/xtensa-esp32s3-elf/esp-12.2.0_20230208/xtensa-esp32s3-elf/bin:/home/axl/.espressif/tools/riscv32-esp-elf/esp-12.2.0_20230208/riscv32-esp-elf/bin:/home/axl/.espressif/tools/esp32ulp-elf/2.35_20220830/esp32ulp-elf/bin:/home/axl/.espressif/tools/openocd-esp32/v0.12.0-esp32-20230419/openocd-esp32/bin:/home/axl/.espressif/tools/esp-rom-elfs/20230320",
+    "idf.customExtraVars": {
+        "OPENOCD_SCRIPTS": "/home/axl/.espressif/tools/openocd-esp32/v0.12.0-esp32-20230419/openocd-esp32/share/openocd/scripts",
+        "ESP_ROM_ELF_DIR": "/home/axl/.espressif/tools/esp-rom-elfs/20230320/"
+    },
+    "idf.gitPath": "git",
+
+    // === Red Hat: телеметрия ===
+    "redhat.telemetry.enabled": false,
+
+    // === YAML, Docker Compose и GitHub Actions ===
+    "[dockercompose]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2,
+        "editor.autoIndent": "advanced",
+        "editor.defaultFormatter": "redhat.vscode-yaml"
+    },
+    "[github-actions-workflow]": {
+        "editor.defaultFormatter": "redhat.vscode-yaml"
+    },
+    "yaml.customTags": [
+        "!reference sequence"
+    ],
+    "yaml.disableSchemaDetection": [],
+
+    // === Docker ===
+    "docker.extension.enableComposeLanguageServer": false,
+
+    // === Makefile Tools ===
+    "makefile.configureOnOpen": false,
+
+    // === Remote SSH ===
+    "remote.SSH.experimental.chat": false,
+
+    // === Continue ===
+    "continue.enableTabAutocomplete": true,
+    "continue.telemetryEnabled": false,
+    "continue.showInlineTip": false,
+
+    // === Codeium ===
+    "codeium.enableConfig": {
+        "*": true,
+        "ansible": true
+    },
+
+    // === SourceCraft Code Assistant ===
+    "sourcecraft-code-assist.delayedRequestTimeoutMs": 600,
+
+    // === Kilo Code: разрешённые и запрещённые команды ===
+    "kilo-code.allowedCommands": [
+        "git log",
+        "git diff",
+        "git show"
+    ],
+    "kilo-code.deniedCommands": [],
+
+    // === VSCodeVim и обработка клавиатуры ===
+    "keyboard.dispatch": "keyCode",
     "vim.leader": ",",
     "vim.easymotion": true,
     "vim.useSystemClipboard": true,
@@ -225,6 +440,17 @@
                 "workbench.action.files.saveAll",
             ]
         },
+        // Найти в коде (список в командной панели) (search)
+        {
+            "before": [
+                "<leader>",
+                "s",
+            ],
+            "commands": [
+                "editor.action.addSelectionToNextFindMatch",
+                "workbench.action.quickTextSearch",
+            ]
+        },
         // открыть определение вo всплывающем окне (go to definition)
         {
             "before": [
@@ -244,7 +470,8 @@
                 "r"
             ],
             "commands": [
-                "references-view.findReferences"
+                "references-view.findReferences",
+                "references-view.tree.focus",
             ]
         },
         // Найти упоминания в коде (в поиске) (go to find in files)
@@ -257,6 +484,7 @@
             "commands": [
                 "editor.action.addSelectionToNextFindMatch",
                 "workbench.action.findInFiles",
+                "search.action.focusSearchList",
             ]
         },
         // Найти упоминания в коде (всплывающее окно) (go to usages)
@@ -317,6 +545,7 @@
             ],
             "commands": [
                 "workbench.view.scm",
+                "workbench.scm.action.focusNextResourceGroup"
             ]
         },
         // Показать открытые файлы (toggle open editors)
@@ -476,7 +705,6 @@
                 "workbench.action.navigateForward"
             ]
         },
-
         // Vim: создать вертикальный сплит (vertical split)
         // {
         //     "before": [
@@ -517,120 +745,8 @@
             "commands": [
                 "editor.action.addSelectionToNextFindMatch",
                 "workbench.action.findInFiles",
+                "search.action.focusSearchList",
             ]
         },
     ],
-    "terminal.integrated.copyOnSelection": true,
-    "terminal.integrated.fontWeightBold": "normal",
-    "files.watcherExclude": {
-        "**/.git/objects/**": true,
-        "**/.git/subtree-cache/**": true,
-        "**/node_modules/*/**": true,
-        "**/.venv/**": true,
-        "**/venv/**": true
-    },
-    "editor.renderControlCharacters": true,
-    "editor.minimap.size": "fit",
-    "explorer.confirmDelete": false,
-    "editor.snippetSuggestions": "top",
-    "editor.tabCompletion": "on",
-    "editor.quickSuggestions": {
-        "other": "on",
-        "comments": "off",
-        "strings": "off"
-    },
-    "diffEditor.ignoreTrimWhitespace": false,
-    "editor.suggestSelection": "first",
-    "go.formatTool": "goimports",
-    "scm.alwaysShowRepositories": true,
-    "editor.formatOnSaveMode": "modifications",
-    "editor.minimap.enabled": false,
-    "gitlens.gitCommands.closeOnFocusOut": true,
-    "python.languageServer": "Pylance",
-    "workbench.editorAssociations": {
-        "*.ipynb": "jupyter-notebook",
-        "*.pdf": "latex-workshop-pdf-hook"
-    },
-    "go.toolsManagement.autoUpdate": true,
-    "redhat.telemetry.enabled": false,
-    "notebook.cellToolbarLocation": {
-        "default": "right",
-        "jupyter-notebook": "left"
-    },
-    "git-graph.openNewTabEditorGroup": "Two",
-    "editor.unicodeHighlight.ambiguousCharacters": false,
-    "notebook.lineNumbers": "on",
-    "jupyter.askForKernelRestart": false,
-    "git.autofetch": true,
-    "editor.wordWrap": "on",
-    "workbench.startupEditor": "none",
-    "extensions.ignoreRecommendations": true,
-    "workbench.editor.enablePreview": false,
-    "todo-tree.regex.regex": "(//|%|#|<!--|;|/\\*|^|^[ \\t]*(-|\\d+.))\\s*($TAGS)",
-    "todo-tree.general.statusBar": "total",
-    "[json]": {
-        "editor.defaultFormatter": "vscode.json-language-features"
-    },
-    "[css]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[c]": {
-        "editor.defaultFormatter": "xaver.clang-format"
-    },
-    "editor.fontFamily": "'JetBrainsMono Nerd Font', 'Droid Sans Mono',  'Consolas', 'monospace', monospace",
-    "[html]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "idf.espIdfPath": "/home/axl/.esp/esp-idf",
-    "idf.toolsPath": "/home/axl/.espressif",
-    "idf.customExtraPaths": "/home/axl/.espressif/tools/xtensa-esp-elf-gdb/12.1_20221002/xtensa-esp-elf-gdb/bin:/home/axl/.espressif/tools/riscv32-esp-elf-gdb/12.1_20221002/riscv32-esp-elf-gdb/bin:/home/axl/.espressif/tools/xtensa-esp32-elf/esp-12.2.0_20230208/xtensa-esp32-elf/bin:/home/axl/.espressif/tools/xtensa-esp32s2-elf/esp-12.2.0_20230208/xtensa-esp32s2-elf/bin:/home/axl/.espressif/tools/xtensa-esp32s3-elf/esp-12.2.0_20230208/xtensa-esp32s3-elf/bin:/home/axl/.espressif/tools/riscv32-esp-elf/esp-12.2.0_20230208/riscv32-esp-elf/bin:/home/axl/.espressif/tools/esp32ulp-elf/2.35_20220830/esp32ulp-elf/bin:/home/axl/.espressif/tools/openocd-esp32/v0.12.0-esp32-20230419/openocd-esp32/bin:/home/axl/.espressif/tools/esp-rom-elfs/20230320",
-    "idf.customExtraVars": {
-        "OPENOCD_SCRIPTS": "/home/axl/.espressif/tools/openocd-esp32/v0.12.0-esp32-20230419/openocd-esp32/share/openocd/scripts",
-        "ESP_ROM_ELF_DIR": "/home/axl/.espressif/tools/esp-rom-elfs/20230320/"
-    },
-    "idf.gitPath": "git",
-    "codeium.enableConfig": {
-        "*": true,
-        "ansible": true
-    },
-    "window.customTitleBarVisibility": "auto",
-    "window.menuBarVisibility": "compact",
-    "[typescript]": {
-        "editor.defaultFormatter": "vscode.typescript-language-features"
-    },
-    "markdown.marp.pdf.outlines": "headings",
-    "markdown.marp.browser": "chrome",
-    "continue.enableTabAutocomplete": true,
-    "sourcecraft-code-assist.delayedRequestTimeoutMs": 600,
-    "python.terminal.activateEnvInCurrentTerminal": true,
-    "gitlens.graph.minimap.enabled": false,
-    "remote.SSH.experimental.chat": false,
-    "workbench.activityBar.location": "top",
-    "window.commandCenter": true,
-    "diffEditor.renderSideBySide": false,
-    "kilo-code.allowedCommands": [
-        "git log",
-        "git diff",
-        "git show"
-    ],
-    "kilo-code.deniedCommands": [],
-    "diffEditor.experimental.showMoves": true,
-    "[dockercompose]": {
-        "editor.insertSpaces": true,
-        "editor.tabSize": 2,
-        "editor.autoIndent": "advanced",
-        "editor.defaultFormatter": "redhat.vscode-yaml"
-    },
-    "[github-actions-workflow]": {
-        "editor.defaultFormatter": "redhat.vscode-yaml"
-    },
-    "cSpell.userWords": [
-        "venv",
-    ],
-    "makefile.configureOnOpen": false,
-    "continue.telemetryEnabled": false,
-    "git.confirmSync": false,
-    "workbench.sideBar.location": "right",
-    "git.ignoreRebaseWarning": true,
-    "git.replaceTagsWhenPull": true,
 }
