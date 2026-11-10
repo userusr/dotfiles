@@ -624,21 +624,21 @@
                 "workbench.action.files.saveAll",
             ]
         },
-        // Перейти к предыдущей ошибке
+        // [d: перейти к предыдущей диагностике (ошибке или предупреждению)
         {
             "before": [
                 "[",
-                "e"
+                "d"
             ],
             "commands": [
                 "editor.action.marker.prevInFiles"
             ]
         },
-        // Перейти к следующей ошибке
+        // ]d: перейти к следующей диагностике (ошибке или предупреждению)
         {
             "before": [
                 "]",
-                "e"
+                "d"
             ],
             "commands": [
                 "editor.action.marker.nextInFiles"

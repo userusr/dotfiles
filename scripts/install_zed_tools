@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Системные инструменты для расширений Ansible и CSpell в Zed.
+set -euo pipefail
+
+for dependency in uv npm; do
+    if ! command -v "$dependency" >/dev/null 2>&1; then
+        printf 'Для установки инструментов Zed нужен %s в PATH.\n' "$dependency" >&2
+        exit 1
+    fi
+done
+
+# Отдельное окружение uv; команды доступны через ~/.local/bin.
+uv tool install --with-executables-from ansible-core,ansible-lint ansible
+
+# npm-пакеты храним отдельно от репозитория и глобальных пакетов Node.js.
+zed_tools_dir="$HOME/.local/share/zed-tools"
+npm install --prefix "$zed_tools_dir" --no-audit --no-fund cspell @cspell/dict-ru_ru
+
+# CSpell записывает машинный путь в свой локальный глобальный конфиг.
+# Zed CSpell LSP читает этот конфиг на macOS и Linux автоматически.
+"$zed_tools_dir/node_modules/.bin/cspell" link add \
+    "$zed_tools_dir/node_modules/@cspell/dict-ru_ru/cspell-ext.json"

@@ -1,16 +1,88 @@
 [
   {
-    "context": "vim_mode == normal || vim_mode == visual",
     "bindings": {
+      // Сохранить все открытые изменённые файлы.
+      "ctrl-k s": "workspace::SaveAll",
+      // Открыть проводник и Git-панель.
+      "ctrl-k t": "project_panel::ToggleFocus",
+      "ctrl-k g": "git_panel::ToggleFocus",
+      // Поиск и замена по проекту.
+      "ctrl-k f": "pane::DeploySearch",
+      "ctrl-k r": ["pane::DeploySearch", { "replace_enabled": true }],
+      // Показать или скрыть боковую панель справа.
+      "f1": "workspace::ToggleRightDock"
+    }
+  },
+  {
+    "context": "Editor && vim_mode == normal && !menu",
+    "bindings": {
+      // Предыдущий и следующий открытый файл.
+      "shift-h": "pane::ActivatePreviousItem",
+      "shift-l": "pane::ActivateNextItem",
+      // Перемещение по визуальным строкам с учётом переноса текста.
+      "j": ["vim::Down", { "display_lines": true }],
+      "k": ["vim::Up", { "display_lines": true }],
+      // Следующий/предыдущий результат поиска с центрированием.
+      "n": ["workspace::SendKeystrokes", "n z z"],
+      "shift-n": ["workspace::SendKeystrokes", "shift-n z z"],
+      // Назад и вперёд по истории переходов; предыдущий активный файл.
+      "ctrl-h": "pane::GoBack",
+      "ctrl-l": "pane::GoForward",
+      "tab": "pane::AlternateFile",
+
+      // Сохранить все файлы.
+      ", w": "workspace::SaveAll",
+      // Исправления Ruff, импорты, форматирование и сохранение текущего файла.
+      // Команда дожидается форматирования даже при format_on_save: off.
+      ", d f": "workspace::FormatAndSave",
+      // Перейти к определению; найти ссылки на символ.
+      ", g d": "editor::GoToDefinition",
+      ", g r": "editor::FindAllReferences",
+      ", g u": "editor::FindAllReferences",
+      // Поиск по проекту с подстановкой слова под курсором.
+      ", g f": "pane::DeploySearch",
+      ", s": "pane::DeploySearch",
+      // Git-панель, список открытых файлов и боковая панель.
+      ", t g v": "git_panel::ToggleFocus",
+      ", t o": "tab_switcher::Toggle",
+      ", t s": "workspace::ToggleRightDock",
+
+      // Предыдущая и следующая диагностика (ошибки и предупреждения).
+      "[ d": "editor::GoToPreviousDiagnostic",
+      "] d": "editor::GoToDiagnostic",
+      // Предыдущее и следующее изменение Git.
+      "[ c": "editor::GoToPreviousHunk",
+      "] c": "editor::GoToHunk"
+    }
+  },
+  {
+    "context": "Editor && (vim_mode == normal || vim_mode == visual) && !menu",
+    "bindings": {
+      // Прыжок Sneak вперёд/назад по двум введённым символам.
       "s": "vim::PushSneak",
       "shift-s": "vim::PushSneakBackward",
+      // Открыть проводник файлов.
       ", e": "project_panel::ToggleFocus"
     }
   },
   {
-    "context": "vim_mode == visual",
+    "context": "Editor && vim_mode == visual && !menu",
     "bindings": {
-      "y s": "vim::PushAddSurrounds"
+      // Искать выделенный текст по проекту.
+      ", g f": "pane::DeploySearch",
+      // , s: добавить окружение (скобки, кавычки), не задерживая копирование по y.
+      ", s": "vim::PushAddSurrounds"
+    }
+  },
+  {
+    "context": "Terminal",
+    "bindings": {
+      // Следующий/предыдущий терминал и закрытие активного терминала.
+      "ctrl-b n": "pane::ActivateNextItem",
+      "ctrl-b p": "pane::ActivatePreviousItem",
+      "ctrl-b x": "pane::CloseActiveItem",
+      // Передать Escape и возврат каретки, как в VS Code.
+      "shift-enter": ["terminal::SendText", "\u001b\r"]
     }
   }
 ]

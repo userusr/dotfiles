@@ -7,6 +7,90 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  // Расширения устанавливаются Zed автоматически при запуске.
+  "agent": {
+    "default_model": {
+      "provider": "lmstudio",
+      "model": "mellum2.1-12b-a2.5b-thinking",
+      "enable_thinking": false
+    },
+    "favorite_models": [],
+    "model_parameters": []
+  },
+  "auto_install_extensions": {
+    "ansible": true,
+    "cspell": true,
+    "dockerfile": true
+  },
+  // Боковая панель и диагностика, как в VS Code с Error Lens.
+  "project_panel": {
+    "dock": "right",
+    "show_diagnostics": "all"
+  },
+  "git_panel": {
+    "dock": "right"
+  },
+  "diagnostics": {
+    "inline": {
+      "enabled": true
+    }
+  },
+  "diff_view_style": "unified",
+  "remove_trailing_whitespace_on_save": false,
+
+  // Python: basedpyright проверяет типы в режиме standard по умолчанию.
+  // Обычное сохранение не форматирует Python; для этого есть , d f.
+  "languages": {
+    "Python": {
+      "language_servers": [
+        "basedpyright", "ruff", "!ty", "!pyrefly", "!pyright", "!pylsp", "..."
+      ],
+      "debuggers": ["Debugpy"],
+      "format_on_save": "off",
+      "code_actions_on_format": {
+        "source.fixAll.ruff": true,
+        "source.organizeImports.ruff": true
+      },
+      "formatter": {
+        "language_server": { "name": "ruff" }
+      }
+    },
+    "YAML": {
+      "formatter": "language_server"
+    },
+    "Ansible": {
+      "semantic_tokens": "combined"
+    }
+  },
+  // Не назначаем Ansible всем YAML-файлам, включая конфиги Dotbot.
+  "file_types": {
+    "Ansible": [
+      "**/*.ansible.yml", "**/*.ansible.yaml",
+      "**/playbooks/*.yml", "**/playbooks/*.yaml",
+      "**/roles/**/tasks/*.yml", "**/roles/**/tasks/*.yaml",
+      "**/roles/**/handlers/*.yml", "**/roles/**/handlers/*.yaml",
+      "**/roles/**/defaults/*.yml", "**/roles/**/defaults/*.yaml",
+      "**/roles/**/vars/*.yml", "**/roles/**/vars/*.yaml",
+      "**/group_vars/**/*.yml", "**/group_vars/**/*.yaml",
+      "**/host_vars/**/*.yml", "**/host_vars/**/*.yaml",
+      "**/*playbook*.yml", "**/*playbook*.yaml"
+    ]
+  },
+  "lsp": {
+    "yaml-language-server": {
+      "settings": {
+        "yaml": { "customTags": ["!reference sequence"] }
+      }
+    },
+    "cspell": {
+      "initialization_options": {
+        "defaultSettings": {
+          "language": "en,ru"
+        }
+      }
+    }
+  },
+
   // Подсказки при редактировании через локальную модель LM Studio.
   "edit_predictions": {
     "provider": "open_ai_compatible_api",
@@ -21,7 +105,7 @@
   // Модели LM Studio для чата обнаруживаются автоматически.
   "language_models": {
     "lmstudio": {
-      "api_url": "http://127.0.0.1:1234/api/v0"
+      "api_url": "http://127.0.0.1:1234/v1"
     }
   },
   "agent_servers": {
@@ -33,6 +117,9 @@
     "trust_all_worktrees": true
   },
   "vim_mode": true,
+  "vim": {
+    "use_system_clipboard": "always"
+  },
   "terminal": {
     "font_size": 12.0,
     "copy_on_select": true
