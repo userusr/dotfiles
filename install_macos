@@ -23,6 +23,7 @@ git submodule update --init --recursive
 #   ./dotbot/bin/dotbot -d . --plugin-dir dotbot-brewfile -c macos/steps/terminal.yml
 #   ./dotbot/bin/dotbot -d . --plugin-dir dotbot-brewfile -c macos/steps/dependencies.yml
 #   ./dotbot/bin/dotbot -d . --plugin-dir dotbot-brewfile -c macos/steps/vscode.yml
+#   ./dotbot/bin/dotbot -d . --plugin-dir dotbot-brewfile -c macos/steps/zed.yml
 #
 # Or install all at once:
 #   ./install_macos
@@ -40,3 +41,4 @@ run_dotbot () {
 run_dotbot 'macos/steps/terminal.yml' || true
 run_dotbot 'macos/steps/dependencies.yml' || true
 run_dotbot 'macos/steps/vscode.yml' || true
+run_dotbot 'macos/steps/zed.yml' || true

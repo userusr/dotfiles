@@ -1,6 +1,6 @@
 # https://github.com/sindrel/excalidraw-converter
 brew "excalidraw-converter"
-#brew "zed"
+brew "zed"
 brew "iterm2"
 brew "uv"
 brew "ripgrep"
