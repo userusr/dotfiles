@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+
+# Назначение:
+#   Привести dotfiles к целевому состоянию в установленном порядке.
+#
+# Использование:
+#   bash scripts/install_all linux|macos [параметры Dotbot...]
+#   Обычно вызывается через ./install_linux или ./install_macos.
+#
+# Параметры:
+#   $1 — платформа; остальные передаются каждому вызову Dotbot без изменений
+#   (например, --only link).
+#
+# Окружение:
+#   HOME — домашний каталог пользователя; PATH дополняется путями инструментов.
+#
+# Функции:
+#   Собственных функций нет; диагностика — из lib/log.sh.
+#
+# Этапы:
+#   Подмодули → зависимости → терминал → Vim → VSCode → Zed.
+#
+# Результат:
+#   Выполнены запрошенные действия; после неуспешной директивы Dotbot остановка.
+#
+# Код выхода:
+#   0 — успех; 2 — неверная платформа/аргументы; иначе код Git или Dotbot.
+#   Dotbot возвращает 1 при ошибке директивы; исходный код вложенной команды и
+#   причину ошибки сообщает её установочный скрипт.
+
+set -Eeuo pipefail
+repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=scripts/lib/log.sh
+source "$repo_dir/scripts/lib/log.sh"
+
+# --- Аргументы и окружение: выбрать платформу и доступные программы ---
+dotfiles_stage 'проверка платформы'
+if (( $# < 1 )); then
+    dotfiles_log 'Ошибка: укажите linux|macos, затем необязательные параметры Dotbot.'
+    exit 2
+fi
+platform="$1"
+shift
+case "$platform" in
+    linux|macos) ;;
+    *) dotfiles_log "Ошибка: неизвестная платформа $platform; допустимы linux и macos."; exit 2 ;;
+esac
+cd "$repo_dir"
+export SHELL=/bin/bash
+export PATH="$HOME/.local/bin:$HOME/.fnm:$PATH"
+if [[ "$platform" == macos ]]; then
+    if [[ -x /opt/homebrew/bin/brew ]]; then
+        export PATH="/opt/homebrew/bin:$PATH"
+        dotfiles_log 'Выбран Homebrew из /opt/homebrew/bin.'
+    elif [[ -x /usr/local/bin/brew ]]; then
+        export PATH="/usr/local/bin:$PATH"
+        dotfiles_log 'Выбран Homebrew из /usr/local/bin.'
+    else
+        dotfiles_log 'Homebrew в стандартных каталогах отсутствует; используем PATH.'
+    fi
+fi
+dotfiles_log "Платформа: $platform; дополнительные параметры Dotbot: $# шт."
+
+# --- Подмодули: получить Dotbot и его плагины перед запуском шагов ---
+dotfiles_stage 'подмодули Git'
+git submodule sync --quiet --recursive
+git submodule update --init --recursive
+
+# --- Установка: зависимости должны появиться до использующих их инструментов ---
+# Массив сохраняет пробелы в аргументах; --exit-on-failure действует между директивами.
+# Зависимые shell-команды должны быть отдельными директивами в YAML.
+dotbot_args=(-d "$repo_dir" --exit-on-failure)
+if [[ "$platform" == macos ]]; then
+    dotbot_args+=(--plugin-dir "$repo_dir/dotbot-brewfile")
+fi
+for step in dependencies terminal vim vscode zed; do
+    dotfiles_stage "$platform/$step"
+    "$repo_dir/dotbot/bin/dotbot" "${dotbot_args[@]}" \
+        -c "$repo_dir/$platform/steps/$step.yml" "$@"
+    dotfiles_log 'Этап завершён.'
+done
+dotfiles_log 'Все запрошенные этапы установки успешно завершены.'

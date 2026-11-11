@@ -1,5 +1,9 @@
 ---
 - defaults:
+    shell:
+      stdout: true
+      stderr: true
+      quiet: true
     link:
       create: true
       relink: true
@@ -11,5 +15,3 @@
 - shell:
     - command: bash scripts/install_zed_tools
       description: Install Ansible tools and the Russian CSpell dictionary for Zed
-      stdout: true
-      stderr: true

@@ -1,7 +1,7 @@
 # https://github.com/sindrel/excalidraw-converter
 brew "excalidraw-converter"
-brew "zed"
-brew "iterm2"
+cask "zed"
+cask "iterm2"
 brew "uv"
 brew "ripgrep"
 brew "tmux"
@@ -24,7 +24,7 @@ brew "bat"
 # GNU File, Shell, and Text utilities
 brew "coreutils"
 # Reimplementation of ctags(1)
-brew "ctags"
+brew "universal-ctags"
 # Cryptography and SSL/TLS Toolkit
 #brew "openssl@3"
 # C library implementing the SSH2 protocol
@@ -115,7 +115,8 @@ brew "rustup"
 # Intuitive find & replace CLI
 #brew "sd"
 # Static analysis and lint tool, for (ba)sh scripts
-#brew "shellcheck"
+brew "shellcheck"
+brew "yamllint"
 # Code-search similar to ack
 brew "the_silver_searcher"
 # Display directories as trees (with optional color/HTML output)

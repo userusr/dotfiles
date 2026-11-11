@@ -1,9 +1,10 @@
 # System utilities
 curl
 wget
+unzip
 git
 tmux
-vim
+vim-gtk3
 zsh
 
 # Development
@@ -23,7 +24,7 @@ python3-dev
 
 # Search and text processing
 ripgrep
-the_silver_searcher
+silversearcher-ag
 jq
 bat
 fzf
@@ -42,9 +43,7 @@ fonts-powerline
 # Linting and formatting
 shellcheck
 yamllint
-python3-autopep8
-python3-yapf
 
 # C/C++ development
 clang-format
-ctags
+universal-ctags

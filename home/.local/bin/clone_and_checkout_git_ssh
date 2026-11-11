@@ -1,20 +1,79 @@
 #!/usr/bin/env bash
 
+# Назначение:
+#   Клонировать SSH-репозиторий в каталог ветки и открыть его в VS Code.
+#
+# Использование:
+#   clone_and_checkout_git_ssh git@host:group/repo.git [ветка]
+#
+# Параметры:
+#   $1 — SSH-URL в scp-формате с окончанием .git.
+#   $2 — ветка (по умолчанию master).
+#   Поддерживаемый путь group/repo не должен содержать точек.
+#
+# Окружение:
+#   Текущий каталог — база для group/repo/repo__ветка; PATH — git/code,
+#   настройки Git/SSH обеспечивают доступ к серверу.
+#
+# Функции:
+#   log пишет диагностику в stderr, open_editor запускает VS Code. Недопустимые
+#   в суффиксе ветки символы заменяются на _: например feature/x становится
+#   feature_x.
+#
+# Результат:
+#   Новый checkout нужной ветки открыт в VS Code. Существующий каталог просто
+#   открывается, его ветка и полнота checkout не проверяются.
+#
+# Код выхода:
+#   0 — успех; 1 — аргументы/зависимости/URL; 2 — mkdir; 3 — clone; 4/6 — смена
+#   каталога; 5 — checkout; при сбое code возвращается его код. После неудачного
+#   clone/checkout каталог остаётся для ручной проверки.
+
+# --- Диагностика и аргументы: проверить вход до создания каталогов ---
+# Все аргументы log объединяются в одно сообщение; URL в сообщения не включается.
+log() { printf '[clone_and_checkout_git_ssh] %s\n' "$*" >&2; }
+
+# $1 — каталог checkout. Открывает его в редакторе, поясняет сбой CLI и возвращает
+# исходный код code; используется и для нового, и для существующего каталога.
+open_editor() {
+  local status
+  code "$1"
+  status=$?
+  if (( status != 0 )); then
+    log "Ошибка запуска VS Code, код $status; причина — в выводе CLI выше."
+  else
+    log 'VS Code принял команду открытия каталога.'
+  fi
+  return "$status"
+}
+
+if (( $# < 1 || $# > 2 )); then
+  log 'Ошибка: укажите SSH-URL и необязательную ветку (по умолчанию master).'
+  exit 1
+fi
+for dependency in git code; do
+  if ! command -v "$dependency" >/dev/null 2>&1; then
+    log "Ошибка: $dependency не найден в PATH."
+    exit 1
+  fi
+done
+
 repo_url="$1"
 branch="${2:-master}"
 
 start_dir="$(pwd)"
 
+# --- Пути: извлечь group/repo и имя, затем сформировать каталог отдельной ветки ---
 repo_path=$(echo "$repo_url" | sed -E 's#^[^:]+:([^\.]+)\.git$#\1#')
 repo_name=$(echo "$repo_url" | sed -E 's#.*/([^/]+)\.git#\1#')
 
 if [[ -z "$repo_path" ]]; then
-  echo "ERROR: Не удалось извлечь путь из SSH-URL: $repo_url"
+  log 'Ошибка: не удалось извлечь путь из SSH-URL.'
   exit 1
 fi
 
 if [[ -z "$repo_name" ]]; then
-  echo "ERROR: Не удалось извлечь имя из SSH-URL: $repo_url"
+  log 'Ошибка: не удалось извлечь имя из SSH-URL.'
   exit 1
 fi
 
@@ -22,35 +81,43 @@ safe_branch=$(echo "$branch" | sed -E 's#[^A-Za-z0-9._-]#_#g')
 
 full_path="${repo_path}/${repo_name}__${safe_branch}"
 
+log "Каталог назначения: $full_path; ветка: $branch."
+
+# --- Повторный запуск: существующий каталог открыть без clone/checkout ---
 if [ -d "$full_path" ]; then
-  echo "Path '$full_path' exists"
-  code "$full_path"
-  exit 0
+  log "Каталог $full_path существует; clone и переключение ветки пропускаем, открываем VS Code."
+  open_editor "$full_path"
+  exit "$?"
 fi
 
+# --- Новый checkout: создать каталог, скачать репозиторий, переключить ветку ---
+log 'Каталог отсутствует; создаём его и клонируем репозиторий.'
 mkdir -p "$full_path" || {
-  echo "ERROR: Не удалось создать директорию $full_path";
+  log "Ошибка: не удалось создать каталог $full_path; подробности выше.";
   exit 2;
 }
 
 git clone "$repo_url" "$full_path" || {
-  echo "ERROR: git clone завершился с ошибкой для репозитория $repo_url";
+  log 'Ошибка git clone; причина — в выводе Git выше. Проверьте доступ/SSH и оставшийся каталог перед повтором.';
   exit 3;
 }
 
 cd "$full_path" || {
-  echo "ERROR: Не удалось перейти в директорию $full_path";
+  log "Ошибка: не удалось перейти в каталог $full_path.";
   exit 4;
 }
 
+log "Репозиторий загружен; переключаем ветку на $branch."
 git checkout "$branch" || {
-  echo "ERROR: Не удалось выполнить git checkout ветки $branch";
+  log "Ошибка переключения ветки $branch; причина — в выводе Git выше. Checkout оставлен для проверки.";
   exit 5;
 }
 
+# --- Редактор: после успешного checkout открыть путь относительно исходного каталога ---
 cd "$start_dir" || {
-  echo "ERROR: Не удалось перейти в директорию $start_dir";
+  log "Ошибка: не удалось вернуться в каталог $start_dir.";
   exit 6;
 }
 
-code "$full_path"
+log 'Checkout готов; открываем VS Code.'
+open_editor "$full_path"

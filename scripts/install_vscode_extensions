@@ -1,66 +1,122 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+# Назначение:
+#   Установить отсутствующие расширения из списка в один профиль VS Code.
+#
+# Использование:
+#   bash scripts/install_vscode_extensions <extensions.txt> [профиль]
+#
+# Параметры:
+#   $1 — файл: один ID publisher.extension на строку; пустые строки и строки с #
+#   пропускаются.
+#   $2 — имя профиля; без него используется default. Именованный профиль
+#   создаётся при необходимости.
+#
+# Окружение:
+#   CODE_BIN — CLI VS Code (по умолчанию code; на macOS есть fallback в
+#   /Applications).
+#
+# Функции:
+#   Диагностика — из lib/log.sh. Новое окно VS Code используется для создания
+#   профиля.
+#
+# Примеры:
+#   scripts/install_vscode_extensions home/.code_profiles/default/extensions.txt
+#   Для Python выполнить два раза с параметром python: сначала
+#   default/extensions.txt, затем python/extensions.txt. Списки автоматически не
+#   объединяются.
+#
+# Результат:
+#   Все перечисленные ID установлены в выбранном профиле; существующие не
+#   обновляются.
+#
+# Код выхода:
+#   0 — готово; 1 — аргументы/проверка/ошибки расширений; иначе код команды CLI.
 
-# Install the default profile's extensions:
-#   ./scripts/install_vscode_extensions home/.code_profiles/default/extensions.txt
-# Install the base and Python additions into the python profile:
-#   ./scripts/install_vscode_extensions home/.code_profiles/default/extensions.txt python
-#   ./scripts/install_vscode_extensions home/.code_profiles/python/extensions.txt python
-# Exported profile lists include all installed extensions. Remove the base IDs
-# before saving a named profile's additions to its extensions.txt.
+set -Eeuo pipefail
+# shellcheck source=scripts/lib/log.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/log.sh"
 
-# Omit the profile name to install into VS Code's default profile.
+# --- Список и CLI: проверить входной файл и найти исполняемый code ---
+dotfiles_stage 'проверка списка и CLI'
 if (( $# < 1 || $# > 2 )); then
-  echo "Usage: $0 <extensions.txt> [profile-name]" >&2
+  dotfiles_log "Ошибка: использование: $0 <extensions.txt> [профиль]."
   exit 1
 fi
-
 extensions_file="$1"
 if [[ ! -f "$extensions_file" ]]; then
-  echo "Extension list not found: $extensions_file" >&2
+  dotfiles_log "Ошибка: файл списка не найден: $extensions_file."
   exit 1
 fi
-
-if ! command -v code >/dev/null 2>&1; then
-  echo "VS Code CLI 'code' not found; skipping extension installation." >&2
-  exit 0
+code_bin="${CODE_BIN:-code}"
+if [[ "$code_bin" == code ]] && ! command -v "$code_bin" >/dev/null 2>&1 && [[ -x '/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code' ]]; then
+  code_bin='/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code'
+  dotfiles_log 'code отсутствует в PATH; используем CLI из приложения macOS.'
 fi
+if ! command -v "$code_bin" >/dev/null 2>&1; then
+  dotfiles_log "Ошибка: CLI $code_bin не найден. Установите VS Code, добавьте code в PATH или задайте CODE_BIN."
+  exit 1
+fi
+# Массив всегда содержит CLI: безопасен с set -u в Bash 3.2, сохраняет пробелы.
+code_command=("$code_bin")
+if (( $# == 2 )); then
+  code_command+=(--profile "$2")
+fi
+dotfiles_log "CLI: $code_bin; список: $extensions_file; профиль: ${2:-default}."
 
-# Extension-management commands cannot create profiles themselves.
-if (( $# == 2 )) && ! code --profile "$2" --list-extensions >/dev/null 2>&1; then
-  code --profile "$2" --new-window
+# --- Профиль: команды управления расширениями сами не создают профиль ---
+# Если запрос списка не удался, открываем профиль и ждём готовности до 30 проверок.
+dotfiles_stage 'подготовка профиля'
+if (( $# == 2 )) && ! "${code_command[@]}" --list-extensions >/dev/null 2>&1; then
+  dotfiles_log "Список профиля $2 недоступен; пробуем создать/открыть профиль в новом окне, затем ждём готовности (до 30 проверок через секунду)."
+  "${code_command[@]}" --new-window
   profile_ready=false
   for (( attempt=0; attempt<30; attempt++ )); do
-    if code --profile "$2" --list-extensions >/dev/null 2>&1; then
+    if "${code_command[@]}" --list-extensions >/dev/null 2>&1; then
       profile_ready=true
       break
     fi
     sleep 1
   done
   if [[ "$profile_ready" != true ]]; then
-    echo "VS Code profile is unavailable: $2" >&2
+    dotfiles_log "Ошибка: профиль $2 недоступен после ожидания. Диагностика CLI:"
+    "${code_command[@]}" --list-extensions >&2 || true
     exit 1
   fi
+else
+  dotfiles_log 'Используем существующий профиль; создавать окно не требуется.'
 fi
 
+# --- Сверка: запросить список только выбранного профиля и добавить недостающие ID ---
+dotfiles_stage 'установка отсутствующих расширений'
+installed_extensions=$("${code_command[@]}" --list-extensions)
 failed_extensions=()
+installed_count=0
+skipped_count=0
 while IFS= read -r extension || [[ -n "$extension" ]]; do
   extension="${extension%$'\r'}"
   [[ -z "$extension" || "$extension" == \#* ]] && continue
-
-  if (( $# == 2 )); then
-    if ! code --profile "$2" --install-extension "$extension"; then
-      failed_extensions+=("$extension")
-    fi
+  if printf '%s\n' "$installed_extensions" | grep -Fxiq -- "$extension"; then
+    skipped_count=$((skipped_count + 1))
+    continue
+  fi
+  dotfiles_log "$extension отсутствует; устанавливаем."
+  if "${code_command[@]}" --install-extension "$extension"; then
+    installed_count=$((installed_count + 1))
   else
-    if ! code --install-extension "$extension"; then
-      failed_extensions+=("$extension")
-    fi
+    status=$?
+    dotfiles_log "Ошибка установки $extension (код $status); причина — в выводе CLI выше. Проверяем остальные ID."
+    failed_extensions+=("$extension")
   fi
 done < "$extensions_file"
 
+# --- Итог: отдельные ошибки собираются, но общий запуск обязан вернуть неуспех ---
+dotfiles_stage 'результат установки расширений'
+dotfiles_log "Установлено: $installed_count; уже установлены (пропущены без обновления): $skipped_count; ошибок: ${#failed_extensions[@]}."
 if (( ${#failed_extensions[@]} > 0 )); then
-  printf 'Failed to install extension: %s\n' "${failed_extensions[@]}" >&2
+  for extension in "${failed_extensions[@]}"; do
+    dotfiles_log "Не установлен: $extension."
+  done
   exit 1
 fi
+dotfiles_log "Список применён к профилю ${2:-default}."

@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+
+# Назначение:
+#   Установить пользовательские инструменты терминала после системных пакетов.
+#
+# Использование:
+#   bash scripts/install_terminal linux|macos (вызывается и из Dotbot).
+#
+# Параметры:
+#   $1 — платформа: Linux получает pyenv из Git, macOS использует установленный
+#   pyenv.
+#
+# Окружение:
+#   PYENV_ROOT — каталог pyenv на Linux (по умолчанию ~/.pyenv); на macOS
+#   каталог определяется командой pyenv root. HOME/PATH задают пути
+#   инструментов.
+#
+# Функции:
+#   Логирование из lib/log.sh; checkout проверяет отдельный ensure_git_checkout.
+#
+# Результат:
+#   Oh My Zsh, pyenv-virtualenv, fnm и uv доступны; shell-конфиги не
+#   переписываются. Существующие checkout и найденные fnm/uv пропускаются.
+#   Симлинки создаёт Dotbot.
+#
+# Код выхода:
+#   0 — готово; 2 — неверные аргументы; иначе ненулевой код ошибки команды.
+
+set -Eeuo pipefail
+repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=scripts/lib/log.sh
+source "$repo_dir/scripts/lib/log.sh"
+
+# --- Входные данные: проверить платформу до скачивания и изменения каталогов ---
+dotfiles_stage 'проверка платформы'
+if (( $# != 1 )) || [[ "$1" != linux && "$1" != macos ]]; then
+    dotfiles_log 'Ошибка: требуется один параметр — linux или macos.'
+    exit 2
+fi
+platform="$1"
+export PATH="$HOME/.local/bin:$HOME/.fnm:$PATH"
+
+# --- Zsh: получить Oh My Zsh без запуска его интерактивного установщика ---
+dotfiles_stage 'Oh My Zsh'
+bash "$repo_dir/scripts/ensure_git_checkout" \
+    https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh" oh-my-zsh.sh
+
+# --- Python: выбрать pyenv и восстановить плагин виртуальных окружений ---
+dotfiles_stage 'pyenv и pyenv-virtualenv'
+pyenv_root="${PYENV_ROOT:-$HOME/.pyenv}"
+if [[ "$platform" == linux ]]; then
+    dotfiles_log "Linux: проверяем pyenv в $pyenv_root."
+    bash "$repo_dir/scripts/ensure_git_checkout" \
+        https://github.com/pyenv/pyenv.git "$pyenv_root" bin/pyenv
+else
+    if ! command -v pyenv >/dev/null 2>&1; then
+        dotfiles_log 'Ошибка: pyenv отсутствует в PATH; сначала выполните шаг dependencies.'
+        exit 1
+    fi
+    pyenv_root=$(pyenv root)
+    dotfiles_log "macOS: установленный pyenv использует $pyenv_root."
+fi
+bash "$repo_dir/scripts/ensure_git_checkout" \
+    https://github.com/pyenv/pyenv-virtualenv.git "$pyenv_root/plugins/pyenv-virtualenv" bin/pyenv-virtualenv
+
+# --- Загрузчики: установить только отсутствующие fnm/uv, не меняя shell startup files ---
+download_dir=$(mktemp -d)
+trap 'rm -rf "$download_dir"' EXIT
+dotfiles_stage 'fnm'
+if ! command -v fnm >/dev/null 2>&1; then
+    dotfiles_log 'fnm не найден в PATH; скачиваем установщик, shell-конфиги не изменяем.'
+    curl --fail --location --silent --show-error https://fnm.vercel.app/install -o "$download_dir/fnm.sh"
+    bash "$download_dir/fnm.sh" --install-dir "$HOME/.fnm" --skip-shell
+else
+    dotfiles_log "Уже доступен $(command -v fnm); установку пропускаем."
+fi
+dotfiles_stage 'uv'
+if ! command -v uv >/dev/null 2>&1; then
+    dotfiles_log 'uv не найден в PATH; устанавливаем в ~/.local/bin без изменения shell-конфигов.'
+    curl --fail --location --silent --show-error https://astral.sh/uv/install.sh -o "$download_dir/uv.sh"
+    UV_NO_MODIFY_PATH=1 UV_INSTALL_DIR="$HOME/.local/bin" sh "$download_dir/uv.sh"
+else
+    dotfiles_log "Уже доступен $(command -v uv); установку пропускаем."
+fi
+
+# --- Контроль результата: обе команды должны разрешаться в текущем PATH ---
+dotfiles_stage 'проверка результата'
+for dependency in fnm uv; do
+    if ! command -v "$dependency" >/dev/null; then
+        dotfiles_log "Ошибка: после установки $dependency не найден в PATH. Проверьте каталог установки."
+        exit 1
+    fi
+done
+dotfiles_log 'Терминальные инструменты готовы.'

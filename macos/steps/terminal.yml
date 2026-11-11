@@ -1,38 +1,22 @@
 ---
-- clean: ["~"]
+- defaults:
+    shell:
+      stdout: true
+      stderr: true
+      quiet: true
+    link:
+      create: true
+      relink: true
 
 - shell:
-    - command: git submodule update --init --recursive
-      description: Installing submodules
-      stdout: true
-      stderr: true
-
-    # See https://ohmyz.sh
-    - command: |
-        [ -d ~/.oh-my-zsh ] || sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" || true
-      description: Install Oh-My-Zsh
-      stdout: true
-      stderr: true
-
-    - command: |
-        [ -d "$(pyenv root)/plugins/pyenv-virtualenv" ] || git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
-        cd "$(pyenv root)/plugins/pyenv-virtualenv" && git pull
-      description: Install pyenv-virtualenv plugin
-      stdout: true
-      stderr: true
+    - command: bash scripts/install_terminal macos
+      description: Install missing shell tools without updating existing checkouts
 
 - link:
-    ~/.local/bin/vrg:
-      path: home/.local/bin/vrg
-      create: true
-    ~/.local/bin/clone_and_checkout_git_ssh:
-      path: home/.local/bin/clone_and_checkout_git_ssh
-      create: true
-    ~/.vimrc: home/.vimrc
+    ~/.local/bin/vrg: home/.local/bin/vrg
+    ~/.local/bin/clone_and_checkout_git_ssh: home/.local/bin/clone_and_checkout_git_ssh
     ~/.gitconfig: home/.gitconfig
     ~/.tmux.conf: home/.tmux.conf
     ~/.zshrc: home/.zshrc
     ~/.oh-my-zsh-custom: home/.oh-my-zsh-custom
-    ~/.config/opencode/opencode.json:
-      path: home/.config/opencode/opencode.json
-      create: true
+    ~/.config/opencode/opencode.json: home/.config/opencode/opencode.json

@@ -1,44 +1,22 @@
 #!/usr/bin/env bash
 
-set -e
-
-# Exporting the specific shell we want to work with:
-
-SHELL='/bin/bash'
-export SHELL
-
-# Standard dotbot pre-configuration:
-
-readonly DOTBOT_DIR='dotbot'
-readonly DOTBOT_BIN='bin/dotbot'
-readonly BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-readonly ARGS="$@"
-
-cd "$BASEDIR"
-git submodule sync --quiet --recursive
-git submodule update --init --recursive
-
-# Manual installation (step by step):
-#   ./dotbot/bin/dotbot -d . --plugin-dir dotbot-brewfile -c macos/steps/terminal.yml
-#   ./dotbot/bin/dotbot -d . --plugin-dir dotbot-brewfile -c macos/steps/dependencies.yml
-#   ./dotbot/bin/dotbot -d . --plugin-dir dotbot-brewfile -c macos/steps/vscode.yml
-#   ./dotbot/bin/dotbot -d . --plugin-dir dotbot-brewfile -c macos/steps/zed.yml
+# Назначение:
+#   Запуск установки dotfiles для macos из любого рабочего каталога.
 #
-# Or install all at once:
-#   ./install_macos
+# Использование:
+#   ./install_macos [параметры Dotbot...], например --only link.
+#
+# Окружение:
+#   Все параметры без изменений передаются каждому этапу scripts/install_all. HOME и
+#   PATH используются общим установщиком; специальных параметров нет.
+#   Функций нет.
+#
+# Результат:
+#   Общий установщик выполняет зависимости, terminal, Vim, VSCode и Zed; сообщает
+#   этапы в stderr и возвращает 0 при успехе, иначе код ошибки. exec сохраняет
+#   код выхода, не создавая отдельного шага после установки.
 
-run_dotbot () {
-  local config
-  config="$1"
+set -euo pipefail
 
-  "$BASEDIR/$DOTBOT_DIR/$DOTBOT_BIN" \
-    -d "$BASEDIR" \
-    --plugin-dir dotbot-brewfile \
-    -c "$config" $ARGS
-}
-
-run_dotbot 'macos/steps/terminal.yml' || true
-run_dotbot 'macos/steps/dependencies.yml' || true
-run_dotbot 'macos/steps/vscode.yml' || true
-run_dotbot 'macos/steps/zed.yml' || true
+# --- Передача управления: найти репозиторий относительно самого скрипта ---
+exec bash "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/scripts/install_all" macos "$@"

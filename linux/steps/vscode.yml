@@ -1,5 +1,9 @@
 ---
 - defaults:
+    shell:
+      stdout: true
+      stderr: true
+      quiet: true
     link:
       create: true
       relink: true
@@ -10,16 +14,15 @@
     ~/.config/Code/User/tasks.json: home/.code_profiles/default/data/User/tasks.json
     ~/.config/Code/User/snippets: home/.code_profiles/default/data/User/snippets
 
+# Отдельные директивы: --exit-on-failure останавливает Dotbot между ними.
 - shell:
     - command: bash scripts/install_vscode_extensions home/.code_profiles/default/extensions.txt
       description: Install VS Code extensions for the default profile
-      stdout: true
-      stderr: true
+
+- shell:
     - command: bash scripts/install_vscode_extensions home/.code_profiles/default/extensions.txt python
       description: Install default VS Code extensions for the python profile
-      stdout: true
-      stderr: true
+
+- shell:
     - command: bash scripts/install_vscode_extensions home/.code_profiles/python/extensions.txt python
       description: Install VS Code extensions for the python profile
-      stdout: true
-      stderr: true

@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+# Назначение:
+#   Восстановить отсутствующий Git-checkout, сохранив существующие данные.
+#
+# Использование:
+#   bash scripts/ensure_git_checkout <url> <каталог> <контрольный-файл>
+#
+# Параметры:
+#   $1 — адрес Git-репозитория.
+#   $2 — каталог назначения.
+#   $3 — путь обязательного файла относительно корня checkout (например, bin/pyenv).
+#
+# Окружение:
+#   Стандартные настройки Git/SSH и PATH; собственных переключателей нет.
+#
+# Функции:
+#   Диагностика подключается из lib/log.sh. Временный каталог очищается по EXIT.
+#
+# Результат:
+#   checkout с HEAD и контрольным файлом. Уже существующий не обновляется:
+#   локальные изменения сохраняются, git pull не выполняется. Clone неглубокий
+#   (--depth 1).
+#
+# Код выхода:
+#   0 — готово; 2 — аргументы; 1 — конфликт/нет файла; иначе код команды.
+
+set -Eeuo pipefail
+# shellcheck source=scripts/lib/log.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/log.sh"
+
+# --- Проверка назначения: отделить готовый checkout от конфликта данных ---
+dotfiles_stage 'проверка checkout'
+if [[ $# != 3 ]]; then
+    dotfiles_log "Ошибка: использование: $0 <url> <каталог> <контрольный-файл>."
+    exit 2
+fi
+url="$1"
+destination="$2"
+required_file="$3"
+dotfiles_log "Каталог: $destination; контрольный файл: $required_file."
+if [[ -e "$destination/.git" && -f "$destination/$required_file" ]]; then
+    git -C "$destination" rev-parse --verify HEAD >/dev/null
+    dotfiles_log 'Checkout и контрольный файл существуют, HEAD доступен; загрузка не нужна.'
+    exit 0
+fi
+if [[ -L "$destination" ]] || [[ -e "$destination" && ! -d "$destination" ]]; then
+    dotfiles_log "Ошибка: $destination — ссылка или обычный файл; заменять его автоматически нельзя."
+    exit 1
+fi
+if [[ -d "$destination" ]] && [[ -n "$(ls -A "$destination")" ]]; then
+    dotfiles_log "Ошибка: $destination содержит неполный checkout или другие данные. Данные сохранены; устраните конфликт перед повтором."
+    exit 1
+fi
+
+# --- Загрузка: clone во временный соседний каталог не оставит частичный checkout ---
+dotfiles_stage 'клонирование отсутствующего checkout'
+dotfiles_log 'Назначение отсутствует или пусто; можно загрузить репозиторий.'
+mkdir -p "$(dirname "$destination")"
+checkout_tmp=$(mktemp -d "$(dirname "$destination")/.dotfiles-clone.XXXXXX")
+trap 'rm -rf "$checkout_tmp"' EXIT
+git clone --depth 1 "$url" "$checkout_tmp/repo"
+if [[ ! -f "$checkout_tmp/repo/$required_file" ]]; then
+    dotfiles_log "Ошибка: clone завершён, но контрольный файл $required_file отсутствует. Назначение не изменено."
+    exit 1
+fi
+
+# --- Публикация: переместить проверенный checkout, удалив только пустое назначение ---
+dotfiles_stage 'размещение checkout'
+if [[ -d "$destination" ]]; then
+    rmdir "$destination"
+fi
+mv "$checkout_tmp/repo" "$destination"
+dotfiles_log "Готово: $destination; временные файлы будут удалены при выходе."

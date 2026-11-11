@@ -1,71 +1,28 @@
 ---
 - defaults:
+    shell:
+      stdout: true
+      stderr: true
+      quiet: true
     link:
+      create: true
       relink: true
-
-- clean: ["~"]
 
 - create:
     - ~/.ssh
-    - ~/.config/Cursor/User
-    - ~/.local/bin
-    - ~/.fzf
-    - ~/.pyenv
 
 - shell:
-    - command: git submodule update --init --recursive
-      description: Installing submodules
-      stdout: true
-      stderr: true
-
-    # https://ohmyz.sh
-    - command: |
-        [ -d ~/.oh-my-zsh ] || sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" || true
-      description: Install Oh-My-Zsh
-      stdout: true
-      stderr: true
-
-    - command: |
-        [ -d ~/.fzf/.git ] || git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-        cd ~/.fzf && git pull
-      description: Install/Update fzf
-      stdout: true
-      stderr: true
-
-    - command: |
-        [ -d ~/.pyenv/.git ] || git clone https://github.com/pyenv/pyenv.git ~/.pyenv
-        cd ~/.pyenv && git pull
-      description: Install/Update pyenv
-      stdout: true
-      stderr: true
-
-    - command: |
-        [ -d ~/.pyenv/plugins/pyenv-virtualenv ] || git clone https://github.com/pyenv/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
-        cd ~/.pyenv/plugins/pyenv-virtualenv && git pull
-      description: Install/Update pyenv-virtualenv plugin
-      stdout: true
-      stderr: true
-
-    - command: curl -fsSL https://fnm.vercel.app/install | bash -s -- --install-dir "$HOME/.fnm" --skip-shell
-      description: Install fnm
-      stdout: true
-      stderr: true
+    - command: bash scripts/install_terminal linux
+      description: Install missing shell tools without updating existing checkouts
 
 - link:
-    ~/.local/bin/vrg:
-      path: home/.local/bin/vrg
-      create: true
-    ~/.local/bin/clone_and_checkout_git_ssh:
-      path: home/.local/bin/clone_and_checkout_git_ssh
-      create: true
-    ~/.vimrc: home/.vimrc
+    ~/.local/bin/vrg: home/.local/bin/vrg
+    ~/.local/bin/clone_and_checkout_git_ssh: home/.local/bin/clone_and_checkout_git_ssh
     ~/.gitconfig: home/.gitconfig
     ~/.tmux.conf: home/.tmux.conf
     ~/.zshrc: home/.zshrc
     ~/.oh-my-zsh-custom: home/.oh-my-zsh-custom
-    ~/.config/opencode/opencode.json:
-      path: home/.config/opencode/opencode.json
-      create: true
+    ~/.config/opencode/opencode.json: home/.config/opencode/opencode.json
 
     ~/.config/Cursor/User/snippets: home/.code_profiles/default/data/User/snippets
     ~/.config/Cursor/User/keybindings.json: home/.code_profiles/default/data/User/keybindings.json

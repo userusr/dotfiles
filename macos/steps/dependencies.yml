@@ -1,6 +1,19 @@
 ---
+- defaults:
+    shell:
+      stdout: true
+      stderr: true
+      quiet: true
 
 # Installing dependencies:
+- shell:
+    - command: |
+        set -e
+        if brew list --versions ctags >/dev/null 2>&1; then
+          brew unlink ctags
+        fi
+      description: Release legacy Ctags links before installing Universal Ctags
+
 - brewfile:
     file: macos/Brewfile
     no-upgrade: true

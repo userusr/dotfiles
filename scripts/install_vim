@@ -1,0 +1,160 @@
+#!/usr/bin/env bash
+
+# Назначение:
+#   Установить vim-plug, плагины, словари и Python-инструменты Vim.
+#
+# Использование:
+#   bash scripts/install_vim после системных пакетов и симлинков Dotbot.
+#
+# Параметры:
+#   Позиционных параметров нет.
+#
+# Окружение:
+#   VIM_USER_DIR — runtime-каталог (по умолчанию ~/.vim);
+#   VIM_TOOLS_DIR — Python venv (по умолчанию ~/.local/share/vim-tools);
+#   VIM_BIN — путь/имя Vim; по умолчанию Homebrew Vim на macOS, иначе vim из
+#   PATH.
+#
+# Функции:
+#   download_missing загружает отсутствующий/пустой файл; логирование —
+#   lib/log.sh.
+#
+# Результат:
+#   Ruff/basedpyright в venv, словари en/ru и все включённые в .vimrc плагины.
+#   Повторный запуск восстанавливает отсутствующее; не выполняет PlugUpdate/pip
+#   --upgrade.
+#
+# Код выхода:
+#   0 — готово; 1 — проверка не пройдена; иначе код упавшей команды.
+
+set -Eeuo pipefail
+
+repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=scripts/lib/log.sh
+source "$repo_dir/scripts/lib/log.sh"
+
+# --- Пути: выбрать runtime, venv и бинарный файл Vim ---
+dotfiles_stage 'выбор Vim'
+vim_user_dir="${VIM_USER_DIR:-$HOME/.vim}"
+vim_tools_dir="${VIM_TOOLS_DIR:-$HOME/.local/share/vim-tools}"
+
+if [[ "$(uname -s)" == Darwin ]] && command -v brew >/dev/null 2>&1; then
+    PATH="$(brew --prefix)/bin:$PATH"
+    export PATH
+    vim_bin="${VIM_BIN:-$(brew --prefix vim)/bin/vim}"
+else
+    vim_bin="${VIM_BIN:-vim}"
+fi
+
+dotfiles_log "Vim: $vim_bin; runtime: $vim_user_dir; venv: $vim_tools_dir."
+
+# --- Требования: завершиться до загрузки, если пакеты или симлинки не готовы ---
+dotfiles_stage 'проверка зависимостей'
+for dependency in "$vim_bin" git curl python3 rg fzf ctags shellcheck yamllint; do
+    if ! command -v "$dependency" >/dev/null 2>&1; then
+        dotfiles_log "Ошибка: не найдена программа $dependency. Установите зависимости из docs/vim.md."
+        exit 1
+    fi
+done
+if ! ctags --version | head -n 1 | grep -q 'Universal Ctags'; then
+    dotfiles_log 'Ошибка: найденный ctags не Universal Ctags. Проверьте PATH и установку universal-ctags.'
+    exit 1
+fi
+if ! "$vim_bin" -Nu NONE -U NONE -i NONE -n -es \
+    -c "if v:version < 901 || !has('python3') || !has('job') || !has('channel') || !has('keymap') | cquit | endif" \
+    -c 'qa!'; then
+    dotfiles_log "Ошибка: $vim_bin не прошёл проверку Vim 9.1+ с +python3, +job, +channel, +keymap."
+    exit 1
+fi
+if [[ ! -f "$vim_user_dir/autoload/dotfiles.vim" ]]; then
+    dotfiles_log "Ошибка: отсутствует $vim_user_dir/autoload/dotfiles.vim. Сначала создайте симлинки через шаг vim.yml (см. docs/vim.md)."
+    exit 1
+fi
+
+dotfiles_log 'Зависимости, возможности Vim и autoload/dotfiles.vim найдены.'
+
+# --- Python-инструменты: отдельный venv не затрагивает окружения проектов ---
+dotfiles_stage 'Ruff и basedpyright'
+mkdir -p "$vim_user_dir/autoload" "$vim_user_dir/plugged" "$vim_user_dir/spell"
+if [[ ! -x "$vim_tools_dir/bin/python" ]]; then
+    dotfiles_log 'Python в venv отсутствует; создаём окружение.'
+    python3 -m venv "$vim_tools_dir"
+else
+    dotfiles_log 'Venv существует; используем его повторно.'
+fi
+dotfiles_log 'Проверяем наличие ruff/basedpyright через pip install без --upgrade.'
+"$vim_tools_dir/bin/python" -m pip install --disable-pip-version-check ruff basedpyright
+
+# --- Файлы runtime: непустые файлы сохраняем, отсутствующие скачиваем атомарно ---
+dotfiles_stage 'vim-plug и словари'
+vim_setup_dir=$(mktemp -d)
+trap 'rm -rf "$vim_setup_dir"' EXIT
+# $1 — URL, $2 — конечный путь. Скачивание идёт во временный файл, затем mv.
+# Результат: непустой локальный файл сохранён или заменён успешно загруженным.
+# Сбой curl прерывает установку; EXIT-trap удаляет временные файлы.
+download_missing() {
+    local url="$1" destination="$2"
+    if [[ ! -s "$destination" ]]; then
+        dotfiles_log "Файл отсутствует или пуст: $destination; скачиваем."
+        curl --fail --location --show-error --silent --retry 2 \
+            "$url" -o "$vim_setup_dir/download"
+        mv "$vim_setup_dir/download" "$destination"
+        dotfiles_log "Загружен $destination."
+    else
+        dotfiles_log "Файл уже есть: $destination; загрузка не нужна."
+    fi
+}
+download_missing https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim \
+    "$vim_user_dir/autoload/plug.vim"
+for language in en ru; do
+    for extension in spl sug; do
+        download_missing "https://ftp.nluug.nl/pub/vim/runtime/spell/$language.utf-8.$extension" \
+            "$vim_user_dir/spell/$language.utf-8.$extension"
+    done
+done
+
+# --- Плагины: PlugInstall --sync восстанавливает отсутствующие checkout ---
+# Встроенный Vim-сценарий проверяет каталоги и HEAD всех объявленных плагинов;
+# исключение записывается отдельно, потому что headless Vim может скрыть причину.
+dotfiles_stage 'плагины Vim'
+dotfiles_log 'Запускаем PlugInstall --sync; затем проверяем HEAD каждого включённого плагина.'
+cat > "$vim_setup_dir/install.vim" <<'VIM'
+try
+  PlugInstall --sync
+  for [s:name, s:plugin] in items(g:plugs)
+    if !isdirectory(s:plugin.dir)
+      throw 'Отсутствует каталог плагина: ' . s:name
+    endif
+    call system('git -C ' . shellescape(s:plugin.dir) . ' rev-parse --verify HEAD')
+    if v:shell_error
+      throw 'Не удалось проверить HEAD плагина: ' . s:name
+    endif
+  endfor
+catch
+  call writefile([v:exception, v:throwpoint], $DOTFILES_VIM_INSTALL_ERROR)
+  cquit
+endtry
+qa!
+VIM
+export DOTFILES_VIM_USER_DIR="$vim_user_dir"
+export DOTFILES_VIM_TOOLS_DIR="$vim_tools_dir"
+export DOTFILES_VIM_INSTALL_ERROR="$vim_setup_dir/error.log"
+# Переменные в --cmd читает Vim, а не shell.
+# shellcheck disable=SC2016
+if ! "$vim_bin" -N -u "$repo_dir/home/.vimrc" -i NONE -n -es \
+    --cmd 'let g:dotfiles_vim_dir = $DOTFILES_VIM_USER_DIR' \
+    --cmd 'let g:dotfiles_vim_tools_dir = $DOTFILES_VIM_TOOLS_DIR' \
+    -V1"$vim_setup_dir/vim.log" -S "$vim_setup_dir/install.vim"; then
+    dotfiles_log 'Ошибка: установка/проверка плагинов Vim завершилась с ошибкой. Ниже журнал Vim и исключение.'
+    cat "$vim_setup_dir/vim.log" >&2
+    if [[ -f "$DOTFILES_VIM_INSTALL_ERROR" ]]; then
+        cat "$DOTFILES_VIM_INSTALL_ERROR" >&2
+    fi
+    exit 1
+fi
+
+# --- Контроль результата: показать версии установленных Python-инструментов ---
+dotfiles_stage 'проверка результата'
+"$vim_tools_dir/bin/ruff" --version
+"$vim_tools_dir/bin/basedpyright" --version
+dotfiles_log 'Плагины и инструменты установлены. Проверка в Vim: :PlugStatus, :ALEInfo'

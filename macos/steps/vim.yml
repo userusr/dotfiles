@@ -1,0 +1,21 @@
+---
+- defaults:
+    shell:
+      stdout: true
+      stderr: true
+      quiet: true
+    link:
+      create: true
+      relink: true
+
+- link:
+    ~/.vimrc: home/.vimrc
+    ~/.vim/autoload/dotfiles.vim: home/.vim/autoload/dotfiles.vim
+    ~/.vim/after/ftplugin/python.vim: home/.vim/after/ftplugin/python.vim
+    ~/.vim/after/ftplugin/markdown.vim: home/.vim/after/ftplugin/markdown.vim
+    ~/.vim/after/ftplugin/tex.vim: home/.vim/after/ftplugin/tex.vim
+    ~/.vim/after/ftplugin/perl.vim: home/.vim/after/ftplugin/perl.vim
+
+- shell:
+    - command: bash scripts/install_vim
+      description: Install Vim plugins, Python tools and spelling dictionaries

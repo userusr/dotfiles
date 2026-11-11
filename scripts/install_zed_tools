@@ -1,22 +1,94 @@
 #!/usr/bin/env bash
-# Системные инструменты для расширений Ansible и CSpell в Zed.
-set -euo pipefail
 
-for dependency in uv npm; do
-    if ! command -v "$dependency" >/dev/null 2>&1; then
-        printf 'Для установки инструментов Zed нужен %s в PATH.\n' "$dependency" >&2
+# Назначение:
+#   Установить внешние инструменты расширений Ansible и CSpell для Zed.
+#
+# Использование:
+#   bash scripts/install_zed_tools после шага terminal (нужны uv и fnm).
+#
+# Параметры:
+#   Позиционных параметров нет.
+#
+# Окружение:
+#   Специальных переменных нет; HOME/PATH задают пути.
+#
+# Функции:
+#   run_node_tool <команда> [аргументы...] выбирает текущий Node или fnm Node
+#   24; диагностика — из lib/log.sh. Поддерживается системный Node >= 22.
+#
+# Результат:
+#   Ansible/ansible-lint через uv tool, CSpell со словарём ru в
+#   ~/.local/share/zed-tools; словарь подключён в локальном глобальном конфиге
+#   CSpell. Расширения самого Zed устанавливаются редактором из
+#   auto_install_extensions.
+#
+# Код выхода:
+#   0 — готово; 1 — отсутствует зависимость; иначе код упавшей команды.
+
+set -Eeuo pipefail
+# shellcheck source=scripts/lib/log.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/log.sh"
+
+# --- Python-загрузчик: uv из terminal-шагa создаёт изолированное окружение ---
+dotfiles_stage 'проверка uv'
+export PATH="$HOME/.local/bin:$HOME/.fnm:$PATH"
+if ! command -v uv >/dev/null 2>&1; then
+    dotfiles_log 'Ошибка: uv отсутствует в PATH. Сначала запустите шаг terminal.'
+    exit 1
+fi
+dotfiles_log "Используем $(command -v uv)."
+
+# --- Node: обеспечить версию для CSpell, не меняя пользовательский default в fnm ---
+dotfiles_stage 'выбор Node.js'
+node_runner=()
+if ! command -v node >/dev/null 2>&1 || ! node -e 'process.exit(Number(process.versions.node.split(".")[0]) >= 22 ? 0 : 1)'; then
+    dotfiles_log 'Текущий Node отсутствует или не прошёл проверку >= 22; используем Node 24 через fnm.'
+    if ! command -v fnm >/dev/null 2>&1; then
+        dotfiles_log 'Ошибка: для запуска Node 24 нужен fnm; сначала запустите шаг terminal.'
         exit 1
     fi
-done
+    if ! fnm exec --using=24 node --version >/dev/null 2>&1; then
+        dotfiles_log 'Node 24 через fnm недоступен; запускаем его установку.'
+        fnm install 24
+    else
+        dotfiles_log 'Node 24 уже доступен через fnm; загрузка не требуется.'
+    fi
+    node_runner=(fnm exec --using=24)
+else
+    dotfiles_log "Текущий Node подходит: $(node --version); fnm не требуется."
+fi
 
-# Отдельное окружение uv; команды доступны через ~/.local/bin.
+# $1 — программа, остальные параметры передаются без изменений; возвращает её код.
+# Пустой node_runner означает запуск в текущем PATH; иначе fnm задаёт Node только
+# для этой команды. Отдельная ветка нужна для Bash 3.2 с set -u и пустыми массивами.
+run_node_tool() {
+    if (( ${#node_runner[@]} )); then
+        "${node_runner[@]}" "$@"
+    else
+        "$@"
+    fi
+}
+dotfiles_log 'Проверяем npm в выбранном окружении Node.'
+run_node_tool npm --version >/dev/null
+
+# --- Ansible: uv управляет отдельным окружением и экспортирует команды в свой bin ---
+dotfiles_stage 'Ansible и ansible-lint'
+dotfiles_log 'Проверяем/устанавливаем ansible и команды ansible-core, ansible-lint через uv tool.'
 uv tool install --with-executables-from ansible-core,ansible-lint ansible
 
-# npm-пакеты храним отдельно от репозитория и глобальных пакетов Node.js.
+# --- CSpell: npm использует отдельный prefix, существующий манифест сохраняется ---
+dotfiles_stage 'CSpell и русский словарь'
 zed_tools_dir="$HOME/.local/share/zed-tools"
-npm install --prefix "$zed_tools_dir" --no-audit --no-fund cspell @cspell/dict-ru_ru
+if run_node_tool node -e 'const p = require(process.argv[1]); process.exit(p.dependencies && p.dependencies.cspell && p.dependencies["@cspell/dict-ru_ru"] ? 0 : 1)' "$zed_tools_dir/package.json" 2>/dev/null; then
+    dotfiles_log 'Оба пакета описаны в package.json; восстанавливаем зависимости по имеющемуся манифесту/lock-файлу.'
+    run_node_tool npm install --prefix "$zed_tools_dir" --no-audit --no-fund
+else
+    dotfiles_log 'Манифест не читается или в нём нет обоих пакетов; добавляем cspell и @cspell/dict-ru_ru.'
+    run_node_tool npm install --prefix "$zed_tools_dir" --no-audit --no-fund cspell @cspell/dict-ru_ru
+fi
 
-# CSpell записывает машинный путь в свой локальный глобальный конфиг.
-# Zed CSpell LSP читает этот конфиг на macOS и Linux автоматически.
-"$zed_tools_dir/node_modules/.bin/cspell" link add \
+# --- Словарь: записать машинный путь в локальный конфиг, который читает CSpell LSP ---
+dotfiles_stage 'подключение русского словаря'
+run_node_tool "$zed_tools_dir/node_modules/.bin/cspell" link add \
     "$zed_tools_dir/node_modules/@cspell/dict-ru_ru/cspell-ext.json"
+dotfiles_log 'Инструменты Zed установлены, русский словарь CSpell подключён.'
