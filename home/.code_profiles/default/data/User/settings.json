@@ -314,24 +314,12 @@
     "vim.leader": ",",
     "vim.easymotion": true,
     "vim.useSystemClipboard": true,
+    "vim.surround": true,
     "vim.handleKeys": {
         "<C-k>": false,
     },
     "vim.normalModeKeyBindingsNonRecursive": [
-        // Переход не на середину экрана а на 3 строки ниже верхнего края
-        // {
-        //     "before": [
-        //         "z",
-        //         "t"
-        //     ],
-        //     "after": [
-        //         "z",
-        //         "t",
-        //         "3",
-        //         "C-y"
-        //     ]
-        // },
-        // Переключение между буферами
+        // Предыдущий открытый буфер.
         {
             "before": [
                 "<S-h>"
@@ -340,7 +328,7 @@
                 ":bprevious"
             ]
         },
-        // Переключение между буферами
+        // Следующий открытый буфер.
         {
             "before": [
                 "<S-l>"
@@ -349,7 +337,7 @@
                 ":bnext"
             ]
         },
-        // При поиске центрировать результат
+        // Предыдущее совпадение поиска с центрированием.
         {
             "before": [
                 "N"
@@ -360,7 +348,7 @@
                 "z"
             ]
         },
-        // При поиске центрировать результат
+        // Следующее совпадение поиска с центрированием.
         {
             "before": [
                 "n"
@@ -371,7 +359,7 @@
                 "z"
             ]
         },
-        // Перемещаться посимвольно
+        // Вниз по отображаемой строке с учётом переноса.
         {
             "before": [
                 "j"
@@ -381,7 +369,7 @@
                 "j"
             ]
         },
-        // Показать боковую панеть с файловым деревом (toggle explorer)
+        // Открыть проводник.
         {
             "before": [
                 "<leader>",
@@ -391,7 +379,7 @@
                 "workbench.view.explorer"
             ]
         },
-        // Перемещаться посимвольно
+        // Вверх по отображаемой строке с учётом переноса.
         {
             "before": [
                 "k"
@@ -401,57 +389,49 @@
                 "k"
             ]
         },
-        // оставить только текущее окно, все остальные закрыть (close other)
+        // Закрыть панели и редакторы других групп, свернуть проводник и закрыть Git diff.
         {
             "before": [
                 "<leader>",
-                "z",
+                "z"
             ],
-            // "after": [
-            //     "<C-w>",
-            //     "o",
-            // ],
             "commands": [
                 "workbench.action.closePanel",
                 "workbench.action.closeSidebar",
                 "workbench.action.minimizeOtherEditorsHideSidebar",
-                // "workbench.action.toggleSidebarVisibility",
                 "workbench.files.action.collapseExplorerFolders",
                 "workbench.action.closeEditorsInOtherGroups",
-                // "workbench.action.closeOtherEditors",
-                "git.closeAllDiffEditors",
+                "git.closeAllDiffEditors"
             ]
         },
-        // форматировать документ (format document)
+        // Форматировать документ без сохранения; для Python выбран Ruff. Исправления — через Code Actions.
         {
             "before": [
                 "<leader>",
                 "d",
                 "f"
             ],
-            "after": [
-                "workbench.action.files.saveAll",
-            ],
             "commands": [
-                "editor.action.formatDocument",
-                "ruff.executeAutofix",
-                "ruff.executeFormat",
-                "ruff.executeOrganizeImports",
-                "workbench.action.files.saveAll",
+                "editor.action.formatDocument"
             ]
         },
-        // Найти в коде (список в командной панели) (search)
+        // Открыть поиск по содержимому с пустым запросом для ввода.
         {
             "before": [
                 "<leader>",
-                "s",
+                "s"
             ],
             "commands": [
-                "editor.action.addSelectionToNextFindMatch",
-                "workbench.action.quickTextSearch",
+                {
+                    "command": "workbench.action.findInFiles",
+                    "args": {
+                        "query": "",
+                        "triggerSearch": false
+                    }
+                }
             ]
         },
-        // открыть определение вo всплывающем окне (go to definition)
+        // Перейти к определению символа.
         {
             "before": [
                 "<leader>",
@@ -459,10 +439,10 @@
                 "d"
             ],
             "commands": [
-                "editor.action.peekDefinition"
+                "editor.action.revealDefinition"
             ]
         },
-        // Найти упоминания в коде (на боковой панели) (go to references)
+        // Найти ссылки и открыть дерево References.
         {
             "before": [
                 "<leader>",
@@ -471,44 +451,37 @@
             ],
             "commands": [
                 "references-view.findReferences",
-                "references-view.tree.focus",
+                "references-view.tree.focus"
             ]
         },
-        // Найти упоминания в коде (в поиске) (go to find in files)
+        // Буквальный поиск слова под курсором или выделения по рабочему пространству.
         {
             "before": [
                 "<leader>",
                 "g",
-                "f",
+                "f"
             ],
             "commands": [
-                "editor.action.addSelectionToNextFindMatch",
-                "workbench.action.findInFiles",
-                "search.action.focusSearchList",
+                {
+                    "command": "workbench.action.findInFiles",
+                    "args": {
+                        "isRegex": false
+                    }
+                }
             ]
         },
-        // Найти упоминания в коде (всплывающее окно) (go to usages)
-        // потом перемещает строку с курсорок к верху окна и запоминает позицию
-        // курсора в метке "b"
+        // Показать ссылки на символ.
         {
             "before": [
                 "<leader>",
                 "g",
                 "u"
             ],
-            // "after": [
-            //     "m",
-            //     "b",
-            //     "z",
-            //     "t",
-            //     "3",
-            //     "C-y"
-            // ],
             "commands": [
                 "editor.action.goToReferences"
             ]
         },
-        // Перейти к заголовку (go to header)
+        // Переключить исходник / заголовок (расширение C/C++).
         {
             "before": [
                 "<leader>",
@@ -519,13 +492,13 @@
                 "C_Cpp.SwitchHeaderSource"
             ]
         },
-        // Показать боковую патель с git graph (toggle git graph)
+        // Открыть Git Graph с перестройкой групп редакторов.
         {
             "before": [
                 "<leader>",
                 "t",
                 "g",
-                "g",
+                "g"
             ],
             "commands": [
                 "workbench.action.togglePanel",
@@ -535,31 +508,31 @@
                 "workbench.action.splitEditorDown"
             ]
         },
-        // Показать боковую патель с git (toggle git graph view)
+        // Открыть SCM и сфокусировать группу ресурсов.
         {
             "before": [
                 "<leader>",
                 "t",
                 "g",
-                "v",
+                "v"
             ],
             "commands": [
                 "workbench.view.scm",
                 "workbench.scm.action.focusNextResourceGroup"
             ]
         },
-        // Показать открытые файлы (toggle open editors)
+        // Выбрать открытый редактор во всех группах.
         {
             "before": [
                 "<leader>",
                 "t",
-                "o",
+                "o"
             ],
             "commands": [
-                "workbench.files.action.focusOpenEditorsView"
+                "workbench.action.showAllEditors"
             ]
         },
-        // Показать боковую патель (toggle sidebar)
+        // Показать / скрыть боковую панель.
         {
             "before": [
                 "<leader>",
@@ -570,81 +543,57 @@
                 "workbench.action.toggleSidebarVisibility"
             ]
         },
-        // Показать боковую панеть со ссылками (toggle references)
+        // Сфокусировать дерево References.
         {
             "before": [
                 "<leader>",
                 "t",
-                "r",
+                "r"
             ],
             "commands": [
                 "references-view.tree.focus"
             ]
         },
-        // Показать / скрыть боковую панель (toggle sidebar)
-        {
-            "before": [
-                "<leader>",
-                "t",
-                "s",
-            ],
-            "commands": [
-                "workbench.action.toggleSidebarVisibility"
-            ]
-        },
-        // Показать / скрыть открытые редакторы (toggle open editors)
-        {
-            "before": [
-                "<leader>",
-                "t",
-                "o",
-            ],
-            "commands": [
-                "workbench.files.action.focusOpenEditorsView"
-            ]
-        },
-        // Показать / скрыть хлебные крошки (toggle breadcrumbs)
+        // Открыть выбор элемента breadcrumbs.
         {
             "before": [
                 "<space>"
             ],
             "commands": [
-                // "workbench.action.toggleSidebarVisibility",
                 "breadcrumbs.focusAndSelect"
             ]
         },
+        // Сохранить все изменённые файлы.
         {
             "before": [
                 "<leader>",
                 "w"
             ],
             "commands": [
-                // "editor.action.formatDocument",
-                // "eslint.executeAutofix",
-                "workbench.action.files.saveAll",
+                "workbench.action.files.saveAll"
             ]
         },
-        // [d: перейти к предыдущей диагностике (ошибке или предупреждению)
+        // Предыдущая диагностика в текущем файле.
         {
             "before": [
                 "[",
                 "d"
             ],
             "commands": [
-                "editor.action.marker.prevInFiles"
+                "editor.action.marker.prev"
             ]
         },
-        // ]d: перейти к следующей диагностике (ошибке или предупреждению)
+        // Следующая диагностика в текущем файле.
         {
             "before": [
                 "]",
                 "d"
             ],
             "commands": [
-                "editor.action.marker.nextInFiles"
+                "editor.action.marker.next"
             ]
         },
-        // Перейти к предыдущему изменению
+        // Предыдущее изменение обычного или diff-редактора.
         {
             "before": [
                 "[",
@@ -655,7 +604,7 @@
                 "workbench.action.compareEditor.previousChange"
             ]
         },
-        // Перейти к следующему изменению
+        // Следующее изменение обычного или diff-редактора.
         {
             "before": [
                 "]",
@@ -666,7 +615,7 @@
                 "workbench.action.compareEditor.nextChange"
             ]
         },
-        // Поиск EasyMotions
+        // EasyMotion: переход по двум введённым символам.
         {
             "before": [
                 "s"
@@ -678,75 +627,84 @@
                 "s"
             ]
         },
-        // Показать список файлов в этот группу
+        // Найти файл по имени.
         {
             "before": [
-                "<tab>"
+                "<leader>",
+                "f"
             ],
             "commands": [
-                "workbench.action.quickOpenPreviousRecentlyUsedEditorInGroup"
+                "workbench.action.quickOpen"
             ]
         },
-        // Навигация назад по кодовой базе
+        // Выбрать открытый редактор; аналог ,to.
         {
             "before": [
-                "<C-h>"
+                "<leader>",
+                "b"
             ],
             "commands": [
-                "workbench.action.navigateBack"
+                "workbench.action.showAllEditors"
             ]
         },
-        // Навигация вперед по кодовой базе
-        {
-            "before": [
-                "<C-l>"
-            ],
-            "commands": [
-                "workbench.action.navigateForward"
-            ]
-        },
-        // Vim: создать вертикальный сплит (vertical split)
-        // {
-        //     "before": [
-        //         "<leader>",
-        //         "v",
-        //     ],
-        //     "commands": [
-        //         "workbench.action.splitEditorRight"
-        //     ],
-        // },
-        // Навигация между сплитами в стиле Vim
-        // {
-        //     "before": [
-        //         "<C-h>"
-        //     ],
-        //     "commands": [
-        //         "workbench.action.navigateLeft"
-        //     ]
-        // },
-        // {
-        //     "before": [
-        //         "<C-l>"
-        //     ],
-        //     "commands": [
-        //         "workbench.action.navigateRight"
-        //     ]
-        // },
-    ],
-    "vim.visualModeKeyBindingsNonRecursive": [
-        // Ctrl + D - выделить слово под курсором "editor.action.addSelectionToNextFindMatch"
-        // Найти упоминания в коде (в поиске) (go to find in files)
+        // Открыть Git status; аналог ,tgv.
         {
             "before": [
                 "<leader>",
                 "g",
-                "f",
+                "s"
             ],
             "commands": [
-                "editor.action.addSelectionToNextFindMatch",
-                "workbench.action.findInFiles",
-                "search.action.focusSearchList",
+                "workbench.view.scm"
             ]
         },
+        // Показать документацию / тип символа.
+        {
+            "before": [
+                "K"
+            ],
+            "commands": [
+                "editor.action.showHover"
+            ]
+        }
     ],
+    "vim.visualModeKeyBindingsNonRecursive": [
+        // Вниз по отображаемой строке с учётом переноса.
+        {
+            "before": [
+                "j"
+            ],
+            "after": [
+                "g",
+                "j"
+            ]
+        },
+        // Вверх по отображаемой строке с учётом переноса.
+        {
+            "before": [
+                "k"
+            ],
+            "after": [
+                "g",
+                "k"
+            ]
+        },
+        // Буквальный поиск слова под курсором или выделения по рабочему пространству.
+        {
+            "before": [
+                "<leader>",
+                "g",
+                "f"
+            ],
+            "commands": [
+                {
+                    "command": "workbench.action.findInFiles",
+                    "args": {
+                        "isRegex": false
+                    }
+                }
+            ]
+        }
+    ],
+    "projectManager.sortList": "Path",
 }

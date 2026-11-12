@@ -92,17 +92,20 @@
     // Ctrl+B, затем N: переключить фокус на следующий терминал.
     {
         "key": "ctrl+b n",
-        "command": "workbench.action.terminal.focusNext"
+        "command": "workbench.action.terminal.focusNext",
+        "when": "terminalFocus"
     },
     // Ctrl+B, затем P: переключить фокус на предыдущий терминал.
     {
         "key": "ctrl+b p",
-        "command": "workbench.action.terminal.focusPrevious"
+        "command": "workbench.action.terminal.focusPrevious",
+        "when": "terminalFocus"
     },
     // Ctrl+B, затем X: завершить активный терминал.
     {
         "key": "ctrl+b x",
-        "command": "workbench.action.terminal.kill"
+        "command": "workbench.action.terminal.kill",
+        "when": "terminalFocus"
     },
     // Shift+Enter: передать в активный терминал Escape и возврат каретки (\u001b\r).
     {

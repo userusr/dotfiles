@@ -19,31 +19,36 @@
       // Предыдущий и следующий открытый файл.
       "shift-h": "pane::ActivatePreviousItem",
       "shift-l": "pane::ActivateNextItem",
-      // Перемещение по визуальным строкам с учётом переноса текста.
-      "j": ["vim::Down", { "display_lines": true }],
-      "k": ["vim::Up", { "display_lines": true }],
       // Следующий/предыдущий результат поиска с центрированием.
       "n": ["workspace::SendKeystrokes", "n z z"],
       "shift-n": ["workspace::SendKeystrokes", "shift-n z z"],
-      // Назад и вперёд по истории переходов; предыдущий активный файл.
-      "ctrl-h": "pane::GoBack",
-      "ctrl-l": "pane::GoForward",
-      "tab": "pane::AlternateFile",
+      // Ctrl+O/I — штатная история переходов. Tab не переназначаем.
+      // Ctrl+6 — доступный без Shift вариант стандартного Ctrl+^.
+      "ctrl-6": "pane::AlternateFile",
+      "ctrl-^": "pane::AlternateFile",
+      // Документация / тип символа от языкового сервера.
+      "shift-k": "editor::Hover",
+      // Sneak назад оставляем только в Normal; Visual S добавляет окружение.
+      "shift-s": "vim::PushSneakBackward",
 
       // Сохранить все файлы.
       ", w": "workspace::SaveAll",
-      // Исправления Ruff, импорты, форматирование и сохранение текущего файла.
-      // Команда дожидается форматирования даже при format_on_save: off.
-      ", d f": "workspace::FormatAndSave",
+      // Исправления Ruff, импорты и форматирование без сохранения.
+      ", d f": "editor::Format",
       // Перейти к определению; найти ссылки на символ.
       ", g d": "editor::GoToDefinition",
       ", g r": "editor::FindAllReferences",
       ", g u": "editor::FindAllReferences",
-      // Поиск по проекту с подстановкой слова под курсором.
-      ", g f": "pane::DeploySearch",
-      ", s": "pane::DeploySearch",
+      // Буквальный поиск слова под курсором по проекту.
+      ", g f": ["pane::DeploySearch", { "regex": false }],
+      // Открыть поиск и очистить выделенный запрос для ввода нового.
+      ", s": ["action::Sequence", ["pane::DeploySearch", "editor::SelectAll", "editor::Backspace"]],
+      // Найти файл по имени; выбрать открытый файл.
+      ", f": "file_finder::Toggle",
+      ", b": "tab_switcher::Toggle",
       // Git-панель, список открытых файлов и боковая панель.
       ", t g v": "git_panel::ToggleFocus",
+      ", g s": "git_panel::ToggleFocus",
       ", t o": "tab_switcher::Toggle",
       ", t s": "workspace::ToggleRightDock",
 
@@ -58,9 +63,11 @@
   {
     "context": "Editor && (vim_mode == normal || vim_mode == visual) && !menu",
     "bindings": {
-      // Прыжок Sneak вперёд/назад по двум введённым символам.
+      // Перемещение по отображаемым строкам, включая расширение выделения.
+      "j": ["vim::Down", { "display_lines": true }],
+      "k": ["vim::Up", { "display_lines": true }],
+      // Прыжок Sneak вперёд по двум введённым символам.
       "s": "vim::PushSneak",
-      "shift-s": "vim::PushSneakBackward",
       // Открыть проводник файлов.
       ", e": "project_panel::ToggleFocus"
     }
@@ -69,9 +76,9 @@
     "context": "Editor && vim_mode == visual && !menu",
     "bindings": {
       // Искать выделенный текст по проекту.
-      ", g f": "pane::DeploySearch",
-      // , s: добавить окружение (скобки, кавычки), не задерживая копирование по y.
-      ", s": "vim::PushAddSurrounds"
+      ", g f": ["pane::DeploySearch", { "regex": false }],
+      // S: добавить окружение (скобки, кавычки), не задерживая копирование по y.
+      "shift-s": "vim::PushAddSurrounds"
     }
   },
   {

@@ -168,11 +168,7 @@ xnoremap j gj
 xnoremap k gk
 xnoremap gj j
 xnoremap gk k
-" Окна; историю переходов оставить на Ctrl+O/I, Tab не переназначать.
-nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
+" История — штатные Ctrl+O/I, предыдущий файл — Ctrl+^; Tab не переназначать.
 " Сохранить привычное отключение случайного изменения чисел.
 nnoremap <C-a> <Nop>
 nnoremap <C-x> <Nop>
