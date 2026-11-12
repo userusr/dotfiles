@@ -17,6 +17,7 @@
     "workbench.activityBar.location": "top",
     "window.commandCenter": true,
     "workbench.sideBar.location": "right",
+    "workbench.secondarySideBar.defaultVisibility": "hidden",
 
     // === VS Code: редактор, отображение текста и автодополнение ===
     "editor.renderWhitespace": "all",
