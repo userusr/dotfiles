@@ -32,11 +32,8 @@ eval "`fnm env`"
 # https://rustup.rs/
 export PATH=$HOME/.cargo/bin:$PATH
 
-# fzf
-export FZF_BASE="$HOME/.fzf"
-export PATH=$FZF_BASE/bin:$PATH
-# source "$FZF_BASE/shell/key-bindings.zsh"
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# fzf подключает плагин Oh My Zsh из системной установки.
+# Предпросмотр, fzf-tab, Git-поиск и zoxide: .oh-my-zsh-custom/navigation.zsh.
 
 # platformio
 export PATH=$HOME/.platformio/penv/bin:$PATH
@@ -124,7 +121,7 @@ ZSH_CUSTOM=$HOME/.oh-my-zsh-custom
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git fzf fnm git-prompt cp z)
+plugins=(git fzf fnm git-prompt cp)
 
 source $ZSH/oh-my-zsh.sh
 

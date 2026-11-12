@@ -181,6 +181,9 @@ endif
 " === Клавиши установленных плагинов ===
 " Без autoload/dotfiles.vim остаётся доступно обычное редактирование.
 if !empty(globpath(&runtimepath, 'autoload/dotfiles.vim'))
+  " Копировать полный/относительный путь без перевода строки; плагины не нужны.
+  nnoremap <silent> <leader>yp :call dotfiles#copy_path(1)<CR>
+  nnoremap <silent> <leader>yP :call dotfiles#copy_path(0)<CR>
   if dotfiles#has_plugin('nerdtree')
     nnoremap <silent> <leader>e :NERDTreeFocus<CR>
     nnoremap <silent> <leader>nt :NERDTreeToggle<CR>

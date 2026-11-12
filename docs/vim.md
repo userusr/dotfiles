@@ -80,6 +80,7 @@ Perl-форматирование требует `perltidy` (`brew install perlt
 | `Ctrl+O` / `Ctrl+I` | История переходов назад/вперёд; Tab не переназначен |
 | `Ctrl+^` | Alternate buffer |
 | `,w` | Сохранить все буферы |
+| `,yp` / `,yP` | Скопировать полный / относительный путь; без clipboard — во внутренний регистр |
 | `,e` | Открыть/сфокусировать дерево файлов |
 | `,ts`, `F1`, `,nt` | Переключить видимость дерева |
 | `,to`, `,b` | Выбрать открытый буфер |
@@ -151,9 +152,13 @@ extend-select = ["I"]
 ## Проверки
 
 ```sh
-python3 tests/test_vim.py
-VIM_BIN=/opt/homebrew/bin/vim python3 tests/test_vim.py  # macOS Apple Silicon
+python3 tests/test_navigation.py
+VIM_BIN=/opt/homebrew/bin/vim python3 tests/test_navigation.py  # macOS Apple Silicon
 bash -n scripts/install_vim install_macos install_linux
 ```
 
-Проверки используют временный runtime и state, не меняют HOME и не устанавливают плагины. Они проверяют повторный source, persistent undo, смену filetype, удаление локальных клавиш, поиск специальных символов и сохранение регистров. Работа LSP, полноценного UI, clipboard и Linux-пакетов проверяется отдельно на соответствующей машине.
+Проверки используют временный runtime и state, не меняют HOME и не устанавливают
+плагины. Проверяются повторный source, привязки копирования путей, относительные
+и полные пути, неназванные и служебные буферы. Системный clipboard не изменяется;
+внутреннее копирование проверяется на сборке без `+clipboard`. Работа LSP,
+полноценного UI, системного clipboard и Linux-пакетов проверяется отдельно.

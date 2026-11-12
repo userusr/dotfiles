@@ -320,6 +320,16 @@
         "<C-k>": false,
     },
     "vim.normalModeKeyBindingsNonRecursive": [
+        // Копировать полный путь текущего файла в системный буфер.
+        {
+            "before": ["<leader>", "y", "p"],
+            "commands": ["copyFilePath"]
+        },
+        // Копировать относительный путь текущего файла в системный буфер.
+        {
+            "before": ["<leader>", "y", "P"],
+            "commands": ["copyRelativeFilePath"]
+        },
         // Предыдущий открытый буфер.
         {
             "before": [
@@ -708,4 +718,5 @@
         }
     ],
     "projectManager.sortList": "Path",
+    "gitlens.graph.details.location": "auto",
 }

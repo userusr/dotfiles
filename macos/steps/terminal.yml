@@ -13,6 +13,7 @@
       description: Install missing shell tools without updating existing checkouts
 
 - link:
+    ~/.local/bin/dotfiles_previewer: home/.local/bin/dotfiles_previewer
     ~/.local/bin/vrg: home/.local/bin/vrg
     ~/.local/bin/clone_and_checkout_git_ssh: home/.local/bin/clone_and_checkout_git_ssh
     ~/.gitconfig: home/.gitconfig

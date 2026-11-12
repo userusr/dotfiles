@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+# Назначение:
+#   Общий предпросмотр файлов и каталогов для fzf, fzf-tab и Git-поиска.
+#
+# Использование:
+#   dotfiles_previewer <путь>; обычно вызывается из --preview в fzf.
+#
+# Параметры:
+#   $1 — один путь к файлу или каталогу; пробелы требуют кавычек.
+#
+# Окружение:
+#   PATH: tree и bat (в Debian/Ubuntu также поддерживается имя batcat).
+#   FZF_PREVIEW_COLUMNS — ширина предпросмотра; по умолчанию 80.
+#
+# Функции и результат:
+#   Каталог: дерево глубиной 2, до 100 строк, без .git и .venv.
+#   Файл: первые 150 строк с подсветкой. Без bat используется head.
+#   Обычный вывод содержит только предпросмотр; причины ошибок — в stderr.
+#   Ничего не исполняет из просматриваемого файла и не изменяет его.
+#
+# Код выхода:
+#   0 — предпросмотр; 2 — аргументы; 1 — отсутствующий/неподдерживаемый путь.
+
+set -euo pipefail
+
+# --- Аргумент: сохранить путь целиком и защитить начальный дефис ---
+if (( $# != 1 )); then
+    printf '[dotfiles_previewer] Использование: dotfiles_previewer <путь>.\n' >&2
+    exit 2
+fi
+target=$1
+[[ "$target" = /* ]] || target="./$target"
+
+# --- Предпросмотр: ограничить объём, не запускать внешние обработчики файлов ---
+if [[ -d "$target" ]]; then
+    tree -a -C -L 2 --filelimit 50 --noreport -I '.git|.venv|node_modules' -- "$target" | sed -n '1,100p'
+elif [[ -f "$target" ]]; then
+    if command -v bat >/dev/null 2>&1; then
+        viewer=bat
+    elif command -v batcat >/dev/null 2>&1; then
+        viewer=batcat
+    else
+        printf '[dotfiles_previewer] bat/batcat отсутствует; показываю текст без подсветки.\n' >&2
+        head -n 150 -- "$target"
+        exit
+    fi
+    "$viewer" --paging=never --style=numbers --color=always \
+        --terminal-width="${FZF_PREVIEW_COLUMNS:-80}" --line-range=:150 -- "$target"
+else
+    printf '[dotfiles_previewer] Путь не существует или не является файлом/каталогом: %s\n' "$target" >&2
+    exit 1
+fi

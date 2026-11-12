@@ -14,13 +14,16 @@
 #   PYENV_ROOT — каталог pyenv на Linux (по умолчанию ~/.pyenv); на macOS
 #   каталог определяется командой pyenv root. HOME/PATH задают пути
 #   инструментов.
+#   DOTFILES_ZSH_PLUGINS_DIR — каталог fzf-tab/fzf-simple-git;
+#   по умолчанию ~/.local/share/dotfiles/zsh, вне конфигурационного репозитория.
 #
 # Функции:
 #   Логирование из lib/log.sh; checkout проверяет отдельный ensure_git_checkout.
 #
 # Результат:
-#   Oh My Zsh, pyenv-virtualenv, fnm и uv доступны; shell-конфиги не
-#   переписываются. Существующие checkout и найденные fnm/uv пропускаются.
+#   Oh My Zsh, fzf-tab, fzf-simple-git, pyenv-virtualenv, fnm и uv доступны.
+#   Shell-конфиги не переписываются. Существующие checkout и найденные fnm/uv
+#   пропускаются.
 #   Симлинки создаёт Dotbot.
 #
 # Код выхода:
@@ -44,6 +47,15 @@ export PATH="$HOME/.local/bin:$HOME/.fnm:$PATH"
 dotfiles_stage 'Oh My Zsh'
 bash "$repo_dir/scripts/ensure_git_checkout" \
     https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh" oh-my-zsh.sh
+
+# --- Zsh-плагины: скачать отсутствующие checkout вне каталога конфигурации ---
+dotfiles_stage 'fzf-tab и Git-поиск'
+plugins_dir="${DOTFILES_ZSH_PLUGINS_DIR:-$HOME/.local/share/dotfiles/zsh}"
+dotfiles_log "Каталог плагинов: $plugins_dir; существующие checkout сохраняются."
+bash "$repo_dir/scripts/ensure_git_checkout" \
+    https://github.com/Aloxaf/fzf-tab.git "$plugins_dir/fzf-tab" fzf-tab.zsh
+bash "$repo_dir/scripts/ensure_git_checkout" \
+    https://github.com/sobolevn/fzf-simple-git.git "$plugins_dir/fzf-simple-git" fzf-simple-git.sh
 
 # --- Python: выбрать pyenv и восстановить плагин виртуальных окружений ---
 dotfiles_stage 'pyenv и pyenv-virtualenv'

@@ -28,10 +28,15 @@ silversearcher-ag
 jq
 bat
 fzf
+fd-find
+zoxide
 tree
 
 # Version control
 git-delta
+difftastic
+# column is used by fzf-simple-git to display branches
+bsdextrautils
 
 # Containers
 docker.io

@@ -1,4 +1,4 @@
-" Назначение: общие функции поиска, проверки плагинов и буферных клавиш ALE.
+" Назначение: поиск, копирование путей, проверка плагинов и буферные клавиши ALE.
 " Использование: Vim автоматически загружает файл при вызове dotfiles#...()
 " из .vimrc или after/ftplugin. Аргументы описаны перед каждой функцией.
 " Настройки: g:plugs заполняется vim-plug; <leader> в .vimrc равен запятой.
@@ -55,6 +55,44 @@ function! dotfiles#search_root() abort
     endif
   endif
   return getcwd()
+endfunction
+
+" --- Пути текущего файла: ,yp — полный, ,yP — относительный ---
+" absolute: 1 — абсолютный путь, 0 — относительно корня Git или cwd вне Git.
+" Безымянные и служебные буферы возвращают ''. Вне выбранного корня остаётся
+" полный путь. Файл может быть ещё не сохранён; cwd и регистры не меняются.
+function! dotfiles#file_path(absolute) abort
+  if empty(expand('%')) || &buftype !=# ''
+    return ''
+  endif
+  let l:path = expand('%:p')
+  if a:absolute
+    return l:path
+  endif
+  " Git возвращает физический корень; учесть, например, /var -> /private/var.
+  let l:root = substitute(resolve(dotfiles#search_root()), '/\+$', '', '') . '/'
+  let l:resolved = resolve(l:path)
+  return stridx(l:resolved, l:root) == 0 ? strpart(l:resolved, strlen(l:root)) : l:path
+endfunction
+
+" absolute: тот же флаг, что у file_path(). Копирует без завершающего перевода
+" строки в регистр + при наличии clipboard, иначе в безымянный регистр.
+" Возвращает 1 при копировании, 0 для буфера без пути; сообщает выбранный
+" регистр, чтобы не выдавать внутреннее копирование за системный clipboard.
+function! dotfiles#copy_path(absolute) abort
+  let l:path = dotfiles#file_path(a:absolute)
+  if empty(l:path)
+    echo 'Путь не скопирован: текущий буфер не является именованным файлом.'
+    return 0
+  endif
+  if has('clipboard')
+    call setreg('+', l:path, 'v')
+    echo 'Путь скопирован в системный буфер: ' . l:path
+  else
+    call setreg('"', l:path, 'v')
+    echo 'Нет +clipboard; путь скопирован во внутренний регистр Vim: ' . l:path
+  endif
+  return 1
 endfunction
 
 " text: буквальный текст поиска (не регулярное выражение), одна строка.

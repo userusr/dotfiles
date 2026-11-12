@@ -1,10 +1,14 @@
 [alias]
+	difft = -c diff.external=difft diff --ext-diff
 	hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
 	mrh =  log --pretty='%h: %B' --first-parent --no-merges --reverse master...
 
 [core]
     pager = delta
 	excludesFile = ~/.config/git/ignore
+
+[fetch]
+    prune = true
 
 [interactive]
     diffFilter = delta --color-only
@@ -16,7 +20,7 @@
     navigate = true    # use n and N to move between diff sections
     light = false      # set to true if you're in a terminal w/ a light background color (e.g. the default macOS terminal)
     side-by-side = true
-    syntax-theme = zenburn
+    syntax-theme = Monokai Extended
     true-color = auto
 
 [merge]
